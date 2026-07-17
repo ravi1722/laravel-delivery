@@ -6,7 +6,7 @@
     <div class="auth-card">
         <div class="text-center mb-4">
             <h4 class="fw-bold" style="color: var(--primary)">
-                <i class="bi bi-lightning-charge-fill"></i> QuickBite
+                <i class="bi bi-lightning-charge-fill"></i> Laravel-Delivery
             </h4>
             <h5 class="fw-semibold mt-3">Welcome back!</h5>
             <p class="text-muted small">Login to your account</p>
