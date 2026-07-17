@@ -33,13 +33,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name('restaurant.')->group(function () {
-    Route::get('/dasshboard', function () {
+    Route::get('/dashboard', function () {
         return view('restaurant.dashboard');
     })->name('dashboard');
 });
 
 Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent.')->group(function () {
-    Route::get('/dasshboard', function () {
+    Route::get('/dashboard', function () {
         return view('agent.dashboard');
     })->name('dashboard');
 });
