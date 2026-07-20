@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Restaurant\DashboardController as RestaurantDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,12 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('restaurants', AdminRestaurantController::class);
 });
 
 Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name('restaurant.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('restaurant.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [RestaurantDashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent.')->group(function () {
