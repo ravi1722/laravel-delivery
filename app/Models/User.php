@@ -88,7 +88,7 @@ class User extends Authenticatable
     //     return $this->hasMany(Review::class);
     // }
 
-    // Helper methods 
+    // Helper methods
     // public function isAdmin(): bool
     // {
     //     return $this->role === 'admin';
@@ -109,7 +109,7 @@ class User extends Authenticatable
     //     return $this->role === 'customer';
     // }
 
-    // attribute
+    // Accessors
     public function getAvatarAttiribute() : string
     {
         return $this->avatar ? asset('storage/' . $this->avatar) : asset('images/default-avatar.png');

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Str;
 
 class Restaurant extends Model
 {
@@ -89,5 +90,18 @@ class Restaurant extends Model
     //     return $query->where('is_open', true);
     // }
 
-    
+    // Accessors
+    // public function logUrl(): string
+    // {
+    //     return $this->logo ? asset('storage/' . $this->logo) : asset('images/default-restaurant.png');
+    // }
+
+    // protected static function booted(): void
+    // {
+    //     static::creating(function ($restraurant) {
+    //         if(empty($restraurant)) {
+    //             $restraurant->slug = Str::slug($restraurant->name) . '-' . Str::random(5);
+    //         }
+    //     });
+    // }
 }
