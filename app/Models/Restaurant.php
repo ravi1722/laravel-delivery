@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Query\Builder;
 
 class Restaurant extends Model
 {
@@ -33,33 +37,57 @@ class Restaurant extends Model
         'is_featured'
     ];
 
-    public function owner()
+    protected $casts = [
+        // 'is_open' => 'boolean',
+        // 'is_featured' => 'boolean',
+        // 'rating' => 'decimal:2'
+    ];
+
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function menuCategories(){
+    public function menuCategories(): HasMany
+    {
         return $this->hasMany(MenuCategory::class);
     }
 
-    public function orders()
+    // public function menuItems(): HasMany
+    // {
+    //     return $this->hasMany(MenuItem::class);
+    // }
+
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
-    public function reviews()
+    public function reviews(): MorphMany
     {
-        return $this->hasMany(Review::class, 'reviewable');
+        return $this->morphMany(Review::class, 'reviewable');
     }
 
     //------- scopes
-    public function scopeInCity($query, $city)
+    public function scopeInCity(Builder $query, string $city): Builder
     {
         return $query->where('city', $city);
     }
 
-    public function scopeFeatured($query)
+    public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true);
     }
+
+    // public function scopeActive(Builder $query): Builder
+    // {
+    //     return $query->where('status', 'active');
+    // }
+
+    // public function scopeOpen(Builder $query): Builder
+    // {
+    //     return $query->where('is_open', true);
+    // }
+
+    
 }
