@@ -306,7 +306,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-                @if ($errors->any())
+                {{-- @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show">
                         <i class="bi bi-exclamation-triangle me-2"></i>
                         <ul class="mb-0">
@@ -316,7 +316,7 @@
                         </ul>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                @endif
+                @endif --}}
             </div>
 
             <!-- Page Content -->

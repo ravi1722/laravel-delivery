@@ -30,6 +30,9 @@ class RegisterController extends Controller
 
             $user->assignRole($request->role);
             Wallet::create(['user_id' => $user->id, 'balance' => 0]);
+            
+            // Fire registered event (sends verification email)
+            // event(new Registered($user));
 
             Auth::login($user);
         });
