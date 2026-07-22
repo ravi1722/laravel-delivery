@@ -58,10 +58,10 @@ class User extends Authenticatable
     }
 
     // relationships
-    // public function restaurant(): HasOne
-    // {
-    //     return $this->hasOne(Restaurant::class, "owner_id");
-    // }
+    public function restaurant(): HasOne
+    {
+        return $this->hasOne(Restaurant::class, "owner_id");
+    }
 
     // public function addresses(): HasMany
     // {
@@ -89,15 +89,15 @@ class User extends Authenticatable
     // }
 
     // Helper methods
-    // public function isAdmin(): bool
-    // {
-    //     return $this->role === 'admin';
-    // }
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
 
-    // public function isRestaurantOwner(): bool
-    // {
-    //     return $this->role === 'restaurant_owner';
-    // }
+    public function isRestaurantOwner(): bool
+    {
+        return $this->role === 'restaurant_owner';
+    }
 
     // public function isDeliveryAgent(): bool
     // {

@@ -61,8 +61,12 @@ class RestaurantRepository
     //     });
     // }
 
-
-    
+    // public function getFeatured()
+    // {
+    //     return cacheRemember(self::CACHE_TAG, 'restaurants.featured', self::CACHE_TTL, function () {
+    //         return Restaurant::with('owner:id,name')->active()->open()->featured()->withCount('reviews')->orderByDesc('rating')->limit(8)->get();
+    //     });
+    // }
 
     // public function clearCache(): void
     // {

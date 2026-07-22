@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Contracts\MenuServiceInterface;
 use App\Contracts\RestaurantServiceInterface;
+use App\Models\Restaurant;
+use App\Observers\RestaurantObserver;
+use App\Services\MenuService;
 use App\Services\RestaurantService;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(RestaurantServiceInterface::class, RestaurantService::class);
+        $this->app->bind(MenuServiceInterface::class, MenuService::class);
     }
 
     /**
@@ -21,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Restaurant::observe(RestaurantObserver::class);
     }
 }

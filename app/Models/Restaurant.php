@@ -80,15 +80,15 @@ class Restaurant extends Model
         return $query->where('is_featured', true);
     }
 
-    // public function scopeActive(Builder $query): Builder
-    // {
-    //     return $query->where('status', 'active');
-    // }
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
 
-    // public function scopeOpen(Builder $query): Builder
-    // {
-    //     return $query->where('is_open', true);
-    // }
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->where('is_open', true);
+    }
 
     // Accessors
     // public function logUrl(): string
