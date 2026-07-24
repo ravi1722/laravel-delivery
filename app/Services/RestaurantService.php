@@ -24,10 +24,26 @@ class RestaurantService implements RestaurantServiceInterface
 
     public function getRestaurantByOwner(int $ownerId): mixed
     {
-        return $this->restaurantRepository->findById($ownerId);
+        return $this->restaurantRepository->findByOwner($ownerId);
     }
 
-    // public function createRestaurant(array $data): mixed {}
+    public function createRestaurant(array $data): mixed
+    {
+        if (!empty($data['logo'])) {
+            $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+        }
+
+        if (!empty($data['cover_image'])) {
+            $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+        }
+
+        $restaurant = $this->restaurantRepository->storeRestraurant($data);
+
+        // $this->restaurantRepository->clearCache();
+
+        return $restaurant;
+         
+    }
     // public function updateRestaurant(int $id, array $data): mixed {}
     // public function deleteRestaurant(int $id): bool {}
     // public function toggleStatus(int $id): mixed {}

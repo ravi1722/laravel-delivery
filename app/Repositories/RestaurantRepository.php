@@ -54,12 +54,18 @@ class RestaurantRepository
         });
     }
 
-    // public function findByOwner(int $ownerId)
-    // {
-    //     return cacheRemember(self::CACHE_TAG, "restaurants.owner" . $ownerId, self::CACHE_TTL, function () use ($ownerId) {
-    //         return Restaurant::with(["menuCategories"])->withCount(['orders','reviews'])->where('owner_id', $ownerId)->get();
-    //     });
-    // }
+    public function storeRestraurant(array $data)
+    {
+        $Restaurant = Restaurant::create($data);
+        return $Restaurant;
+    }
+
+    public function findByOwner(int $ownerId)
+    {
+        return cacheRemember(self::CACHE_TAG, "restaurants.owner" . $ownerId, self::CACHE_TTL, function () use ($ownerId) {
+            return Restaurant::with(["menuCategories"])->withCount(['orders','reviews'])->where('owner_id', $ownerId)->first();
+        });
+    }
 
     // public function getFeatured()
     // {

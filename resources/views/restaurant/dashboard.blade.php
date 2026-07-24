@@ -13,7 +13,7 @@
                         <i class="bi bi-bag"></i>
                     </div>
                     <div>
-                        <div class="stat-value">11</div>
+                        <div class="stat-value">{{ $stats['today_orders'] ?? 0 }}</div>
                         <div class="stat-label">Today's Orders</div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                         <i class="bi bi-currency-rupee"></i>
                     </div>
                     <div>
-                        <div class="stat-value">₹1485</div>
+                        <div class="stat-value">₹{{ number_format($stats['today_revenue'], 0) }}</div>
                         <div class="stat-label">Today's Revenue</div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <div class="stat-value">2</div>
+                        <div class="stat-value">{{ $stats['pending_orders'] ?? 0 }}</div>
                         <div class="stat-label">Pending Orders</div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <i class="bi bi-egg-fried"></i>
                     </div>
                     <div>
-                        <div class="stat-value">14</div>
+                        <div class="stat-value">{{ $stats['total_menu_items'] ?? 0 }}</div>
                         <div class="stat-label">Menu Items</div>
                     </div>
                 </div>
@@ -65,13 +65,13 @@
             <div class="table-card p-4">
                 <h6 class="fw-semibold mb-3">Quick Actions</h6>
                 <div class="d-grid gap-2">
-                    <a href="#" class="btn btn-primary btn-sm">
+                    <a href="{{ route('restaurant.menu-items.create') }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-plus-lg me-2"></i>Add Menu Item
                     </a>
-                    <a href="#" class="btn btn-outline-primary btn-sm">
+                    <a href="{{ route('restaurant.menu-categories.index') }}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-list-ul me-2"></i>Manage Categories
                     </a>
-                    <a href="#" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ route('restaurant.profile.edit') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-pencil me-2"></i>Edit Profile
                     </a>
                 </div>
@@ -86,17 +86,17 @@
                             Toggle to open or close
                         </div>
                     </div>
-                    <form method="POST" action="">
+                    <form method="POST" action="{{ route('restaurant.toggle-open') }}">
                         @csrf
                         <div class="form-check form-switch mb-0">
                             <input class="form-check-input" type="checkbox" role="switch" onchange="this.form.submit()"
-                                style="width:48px;height:24px;cursor:pointer">
+                                style="width:48px;height:24px;cursor:pointer" {{ $restaurant->is_open ? 'checked' : '' }}>
                         </div>
                     </form>
                 </div>
                 <div class="mt-2 text-center">
-                    <span class="badge bg-success badge-status">'🟢 Currently Open'
-                        {{-- {{ $restaurant->is_open ? '🟢 Currently Open' : '🔴 Currently Closed' }} --}}
+                    <span class="badge bg-success badge-status">
+                        {{ $restaurant->is_open ? '🟢 Currently Open' : '🔴 Currently Closed' }}
                     </span>
                 </div>
             </div>
@@ -120,11 +120,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-3">
-                                    No orders yet
-                                </td>
-                            </tr>
+                            @forelse ($recentOrders as $order)
+                                <tr>
+                                    <td class="fw-semibold small">#{{ $order->order_number }}</td>
+                                    <td class="small">{{ $order->user->name }}</td>
+                                    <td class="small">₹{{ number_format($order->total_amount, 0) }}</td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ config('constants.order_status')[$order->status] ?? 'secondary' }} badge-status">
+                                            {{ ucfirst(str_replace('_', ' ', $order->status)) }}
+                                        </span>
+                                    </td>
+                                    <td class="small text-muted">
+                                        {{ $order->created_at->diffForHumans() }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-3">
+                                        No orders yet
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

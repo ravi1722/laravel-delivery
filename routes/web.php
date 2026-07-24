@@ -6,7 +6,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Restaurant\DashboardController as RestaurantDashboardController;
+use App\Http\Controllers\Restaurant\MenuCategoryController as RestaurantMenuCategoryController;
+use App\Http\Controllers\Restaurant\MenuItemController as RestaurantMenuItemController;
 use App\Http\Controllers\Restaurant\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -48,19 +51,27 @@ Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name
     Route::get('/profile/setup', [ProfileController::class, 'create'])->name('profile.create');
     Route::post('/profile', [ProfileController::class, 'store'])->name('profile.store');
     Route::get('/profile/get-city-state/{pincode}', [ProfileController::class, 'getCityState'])->name('profile.getCityState');
-    // Route::get('/profile/edit', [ProfileController::class, 'edit'])
-    //     ->name('profile.edit');
-    // Route::put('/profile', [ProfileController::class, 'update'])
-    //     ->name('profile.update');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
     // // Menu categories
-    // Route::resource('menu-categories', \App\Http\Controllers\Restaurant\MenuCategoryController::class)
-    //     ->except(['show', 'create', 'edit']);
+    Route::resource('menu-categories', RestaurantMenuCategoryController::class)
+        ->except(['show', 'create', 'edit']);
 
     // // Menu items
-    // Route::resource('menu-items', \App\Http\Controllers\Restaurant\MenuItemController::class);
+    Route::resource('menu-items', RestaurantMenuItemController::class);
     // Route::post('menu-items/{id}/toggle', [\App\Http\Controllers\Restaurant\MenuItemController::class, 'toggle'])
     //     ->name('menu-items.toggle');
+
+    Route::post('/toggle-open', function () {
+        $restaurant = Auth::user()->restaurant;
+        $restaurant->update([
+            'is_open' => !$restaurant->is_open,
+        ]);
+        return back();
+    })->name('toggle-open');
 });
 
 Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent.')->group(function () {

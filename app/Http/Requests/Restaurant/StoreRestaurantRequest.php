@@ -24,7 +24,7 @@ class StoreRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'required|string|min:3|max:255',
+            'name'                  => ['required', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z0-9\s&\'-]+$/'],
             'description'           => 'nullable|string|max:1000',
             'cuisine_type'          => 'required|string|max:100',
             'phone'                 => 'required|string|digits:10|regex:/^[6-9]\d{9}$/|unique:restaurants,phone',
