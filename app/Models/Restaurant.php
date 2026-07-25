@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class Restaurant extends Model
@@ -54,10 +54,10 @@ class Restaurant extends Model
         return $this->hasMany(MenuCategory::class);
     }
 
-    // public function menuItems(): HasMany
-    // {
-    //     return $this->hasMany(MenuItem::class);
-    // }
+    public function menuItems(): HasMany
+    {
+        return $this->hasMany(MenuItem::class);
+    }
 
     public function orders(): HasMany
     {
@@ -96,12 +96,14 @@ class Restaurant extends Model
     //     return $this->logo ? asset('storage/' . $this->logo) : asset('images/default-restaurant.png');
     // }
 
-    // protected static function booted(): void
-    // {
-    //     static::creating(function ($restraurant) {
-    //         if(empty($restraurant)) {
-    //             $restraurant->slug = Str::slug($restraurant->name) . '-' . Str::random(5);
-    //         }
-    //     });
-    // }
+    protected static function booted(): void
+    {
+        static::creating(function ($restraurant) {
+            $restraurant->slug ??= Str::slug($restraurant->name) . '-' . Str::random(5);
+        });
+
+        static::updating(function ($restraurant) {
+            $restraurant->slug = Str::slug($restraurant->name) . '-' . Str::random(5);
+        });
+    }
 }

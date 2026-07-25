@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 if (!function_exists("cacheRemember")) {
     function cacheRemember(string $tag, string $key, string $time, Closure $callback)
@@ -56,5 +58,13 @@ if (!function_exists("getCityByPincode")) {
                 return null;
             }
         });
+    }
+}
+
+if (!function_exists('uploadImage')) {
+    function uploadImage(UploadedFile $file, string $folder): string
+    {
+        $file_name = Str::random(5)  . '.' . $file->getClientOriginalExtension();
+        return $file->storeAs($folder, $file_name, 'public');
     }
 }

@@ -79,7 +79,8 @@
                                 Phone Number <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
-                                value="{{ old('phone') }}" placeholder="10-digit mobile number" required>
+                                value="{{ old('phone') }}" oninput="this.value = this.value.replace(/\D/g, '')"
+                                placeholder="10-digit mobile number" maxlength="10" required>
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -142,8 +143,8 @@
                                 State <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="state" class="form-control @error('state') is-invalid @enderror"
-                                value="{{ old('state') }}" id="state" placeholder="State  - auto filled from pincode"
-                                readonly>
+                                value="{{ old('state') }}" id="state"
+                                placeholder="State  - auto filled from pincode" readonly>
                             @error('state')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -252,6 +253,34 @@
 
 @push('scripts')
     <script>
+        // get city state
+        document.getElementById('pincode').addEventListener('keyup', function(e) {
+            let pincode = this.value;
+
+            if (pincode.length == 6) {
+                $.ajax({
+                    url: '/restaurant/profile/get-city-state/' + pincode,
+                    type: 'GET',
+                    success: function(response) {
+                        // $('.invalid-feedback').remove();
+                        // $('.is-invalid').removeClass('is-invalid');
+                        if (response.success) {
+                            document.getElementById("city").value = response.data.city;
+                            document.getElementById("state").value = response.data.state;
+                        } else {
+                            // $('#pincode').addClass('is-invalid');
+                            // $('#pincode').after('<div class="invalid-feedback">' + response.message + '</div>');
+                            // $('#city').val('');
+                            // $('#state').val('');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseJSON.message);
+                    }
+                });
+            }
+        });
+
         // Logo preview
         document.getElementById('logoInput').addEventListener('change', function() {
             const files = this.files[0];
@@ -279,34 +308,6 @@
                     preview.classList.remove('d-none');
                 }
                 reader.readAsDataURL(files);
-            }
-        });
-
-        // get city state
-        document.getElementById('pincode').addEventListener('keyup', function(e) {
-            let pincode = this.value;
-
-            if (pincode.length == 6) {
-                $.ajax({
-                    url: '/restaurant/profile/get-city-state/' + pincode,
-                    type: 'GET',
-                    success: function(response) {
-                        // $('.invalid-feedback').remove();
-                        // $('.is-invalid').removeClass('is-invalid');
-                        if (response.success) {
-                            document.getElementById("city").value = response.data.city;
-                            document.getElementById("state").value = response.data.state;
-                        } else {
-                            // $('#pincode').addClass('is-invalid');
-                            // $('#pincode').after('<div class="invalid-feedback">' + response.message + '</div>');
-                            // $('#city').val('');
-                            // $('#state').val('');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseJSON.message);
-                    }
-                });
             }
         });
     </script>

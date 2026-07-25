@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class Order extends Model
 {
@@ -83,10 +83,10 @@ class Order extends Model
     //     return $query->where('user_id', '=', $user_id);
     // }
 
-    // public function scopeForRestraurant(Builder $query, int $restraurant_id): Builder
-    // {
-    //     return $query->where('restaurant_id', $restraurant_id);
-    // }
+    public function scopeForRestaurant(Builder $query, int $restraurant_id): Builder
+    {
+        return $query->where('restaurant_id', $restraurant_id);
+    }
 
     // public function scopeForStatus(Builder $query, string $status): Builder
     // {
