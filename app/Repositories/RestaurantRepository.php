@@ -17,7 +17,7 @@ class RestaurantRepository
     {
         $cacheKey = 'restaurant.list' . md5(serialize($filters));
 
-        return cacheRemember(self::CACHE_TAG, $cacheKey, self::CACHE_TTL, function () use ($filters) {
+        // return cacheRemember(self::CACHE_TAG, $cacheKey, self::CACHE_TTL, function () use ($filters) {
             $query = Restaurant::with(["owner:id,name,email,phone"])->withCount(['orders', 'reviews']);
 
             if (!empty($filters['status'])) {
@@ -41,7 +41,7 @@ class RestaurantRepository
             }
 
             return $query->latest()->paginate($filters['paginate'] ?? 15);
-        });
+        // });
         // Cache::tags([self::CACHE_TAG])->remember($cacheKey, self::CACHE_TTL, function () use ($filters) {
 
         // });
@@ -49,9 +49,9 @@ class RestaurantRepository
 
     public function findById(int $id)
     {
-        return cacheRemember(self::CACHE_TAG, "restaurants" . $id, self::CACHE_TTL, function () use ($id) {
+        // return cacheRemember(self::CACHE_TAG, "restaurants" . $id, self::CACHE_TTL, function () use ($id) {
             return Restaurant::with(["owner:id,name,email,phone", "menuCategories.items"])->withCount(['orders', 'reviews'])->find($id);
-        });
+        // });
     }
 
     public function storeRestraurant(array $data)
@@ -62,9 +62,9 @@ class RestaurantRepository
 
     public function findByOwner(int $ownerId)
     {
-        return cacheRemember(self::CACHE_TAG, "restaurants.owner" . $ownerId, self::CACHE_TTL, function () use ($ownerId) {
+        // return cacheRemember(self::CACHE_TAG, "restaurants.owner" . $ownerId, self::CACHE_TTL, function () use ($ownerId) {
             return Restaurant::with(["menuCategories"])->withCount(['orders','reviews'])->where('owner_id', $ownerId)->first();
-        });
+        // });
     }
 
     // public function getFeatured()

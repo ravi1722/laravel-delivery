@@ -26,7 +26,7 @@ class LoginController extends Controller
             ]);
         }
 
-        if(Auth::attempt($request->only("email","password"))) {
+        if(!Auth::attempt($request->only("email","password"))) {
             RateLimiter::hit($key);
             throw ValidationException::withMessages([
                 'email' => "These credentials do not match our records."
