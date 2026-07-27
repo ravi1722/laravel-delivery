@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Restaurant;
 use App\Contracts\RestaurantServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Restaurant\StoreRestaurantRequest;
+use App\Http\Requests\Restaurant\UpdateRestaurantRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,8 +32,19 @@ class ProfileController extends Controller
             ->with('success', 'Restaurant profile created! Pending admin approval.');
     }
 
-    public function edit() {
+    public function edit()
+    {
+        $restaurant = Auth::user()->restaurant;
+        return view('restaurant.profile.edit', compact('restaurant'));
+    }
 
+    public function update(UpdateRestaurantRequest $request) {
+        $restaurant = Auth::user()->restaurant;
+
+        $this->authorize('update', $restaurant);
+
+        $this->restaurant_service->updateRestaurant($restaurant->id, $request->validated());
+        return back()->with('success', 'Restaurant profile updated successfully!');
     }
 
     public function getCityState(int $pincode)

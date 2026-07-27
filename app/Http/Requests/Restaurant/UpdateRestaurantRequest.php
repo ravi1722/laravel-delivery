@@ -4,6 +4,7 @@ namespace App\Http\Requests\Restaurant;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateRestaurantRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class UpdateRestaurantRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->isAdmin() || Auth::user()->isRestaurantOwner();
     }
 
     /**
@@ -23,7 +24,28 @@ class UpdateRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'          => ['sometimes', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z0-9\s&\'-]+$/'],
+            'description'   => 'sometimes|nullable|string|max:1000',
+            'cuisine_type'  => 'sometimes|required|string|max:100',
+            'phone'         => 'sometimes|required|string|regex:/^[6-9]\d{9}$/|unique:restaurants,phone',
+            'email'         => 'sometimes|nullable|email|unique:restaurants,email',
+            'address'       => 'sometimes|required|string|max:500',
+            'city'          => 'sometimes|required|string|max:100',
+            'state'         => 'sometimes|required|string|max:100',
+            'pincode'       => 'sometimes|required|digits:6',
+            'minimum_order' => 'sometimes|required|numeric|min:0',
+            'delivery_time' => 'sometimes|required|integer|min:5|max:120',
+            'delivery_fee'  => 'sometimes|required|numeric|min:0',
+            'logo'          => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'cover_image'   => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.regex'           => 'Please enter a valid Indian mobile number.',
+            'pincode.digits'        => 'Pincode must be exactly 6 digits.',
         ];
     }
 }

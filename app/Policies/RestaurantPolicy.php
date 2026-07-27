@@ -2,12 +2,18 @@
 
 namespace App\Policies;
 
-use App\Models\Restraurant;
+use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class RestaurantPolicy
 {
+    public function before(User $user, Response $response, Restaurant $restaurant): ?bool {
+        if($user->isAdmin()) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Determine whether the user can view any models.
      */
@@ -19,7 +25,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Restraurant $restraurant): bool
+    public function view(User $user, Restaurant $restraurant): bool
     {
         return false;
     }
@@ -35,15 +41,15 @@ class RestaurantPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Restraurant $restraurant): bool
+    public function update(User $user, Restaurant $restraurant): bool
     {
-        return false;
+        return $user->id === $restraurant->id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Restraurant $restraurant): bool
+    public function delete(User $user, Restaurant $restraurant): bool
     {
         return false;
     }
@@ -51,7 +57,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Restraurant $restraurant): bool
+    public function restore(User $user, Restaurant $restraurant): bool
     {
         return false;
     }
@@ -59,7 +65,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Restraurant $restraurant): bool
+    public function forceDelete(User $user, Restaurant $restraurant): bool
     {
         return false;
     }

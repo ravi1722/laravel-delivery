@@ -39,7 +39,7 @@ class Restaurant extends Model
     ];
 
     protected $casts = [
-        // 'is_open' => 'boolean',
+        'is_open' => 'boolean',
         // 'is_featured' => 'boolean',
         // 'rating' => 'decimal:2'
     ];
