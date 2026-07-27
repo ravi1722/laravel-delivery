@@ -18,13 +18,13 @@ class MenuCategory extends Model
     //     return $this->belongsTo(Restaurant::class);
     // }
 
-    // public function items(): HasMany
-    // {
-    //     return $this->hasMany(MenuItem::class, 'category_id');
-    // }
+    public function items(): HasMany
+    {
+        return $this->hasMany(MenuItem::class, 'category_id');
+    }
 
-    // public function scopeActive(Builder $query): Builder
-    // {
-    //     return $query->where('is_active', true);
-    // }
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
 }
