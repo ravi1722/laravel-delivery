@@ -52,7 +52,8 @@ class MenuService implements MenuServiceInterface
         return $category->fresh();
     }
 
-    public function deleteCategory(int $id): bool {
+    public function deleteCategory(int $id): bool
+    {
         $category = $this->menuRepository->getMenuCategoryById($id);
 
         if ($category->items()->count() > 0) {
@@ -67,6 +68,81 @@ class MenuService implements MenuServiceInterface
         // $this->clearMenuCache($restaurantId);
 
         return $result;
+    }
+
+    public function getItemsByRestaurant(int $restaurantId, array $filters = []): mixed
+    {
+        $cacheKey = "menu.items.restaurant.{$restaurantId}." . md5(serialize($filters));
+
+        // return cacheRemember(self::CACHE_TAG, $cacheKey, now()->addDay(), function () use ($restaurantId, $filters) {
+        $query = $this->menuRepository->getMenuItemFromRestaurant($restaurantId);
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['food_type'])) {
+            $query->where('food_type', $filters['food_type']);
+        }
+
+        if (!empty($filters['is_available'])) {
+            $query->available();
+        }
+
+        if (!empty($filters['search'])) {
+            $query->whereFullText(['name', 'description'], $filters['search']);
+        }
+
+        return $query->orderBy('sort_order')->paginate(20);
+        // });
+    }
+
+    public function createItem(array $data): mixed
+    {
+        if (!empty($data['image'])) {
+            $data['image'] = uploadImage($data['image'], 'menu/items');
+        }
+
+        $items = $this->menuRepository->createItem($data);
+        return $items->load(['variants', 'addons']);
+    }
+
+    public function updateItem(int $id, array $data): mixed
+    {
+        $item = $this->menuRepository->getMenuItem($id);
+        if (!empty($data['image'])) {
+            if ($item->image) {
+                Storage::disk('public')->delete($item->image);
+            }
+            $data['image'] = uploadImage($data['image'], 'menu/items');
+        }
+        $item->update($data);
+        // $this->clearMenuCache($item->restaurant_id);
+
+        return $item->fresh(['variants', 'addons']);
+    }
+
+    public function deleteItem(int $id): bool
+    {
+        $item = $this->menuRepository->getMenuItem($id);
+        if ($item->image) {
+            Storage::disk('public')->delete($item->image);
+        }
+        $restaurantId = $item->restaurant_id;
+        $result = $item->delete();
+        // $this->clearMenuCache($restaurantId);
+
+        return $result;
+    }
+
+    public function toggleItemAvailability(int $id): mixed
+    {
+        $item = $this->menuRepository->getMenuItem($id);
+        $item->update(['is_available' => !$item->is_available]);
+
+        // $this->clearMenuCache($item->restaurant_id);
+
+        return $item->fresh();
     }
 
     private function clearMenuCache(int $restaurantId): void

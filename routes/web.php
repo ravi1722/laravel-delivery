@@ -38,10 +38,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Restaurant management
     Route::resource('restaurants', AdminRestaurantController::class);
-    // Route::post('restaurants/{restaurant}/approve', [\App\Http\Controllers\Admin\RestaurantController::class, 'approve'])
-    //     ->name('restaurants.approve');
-    // Route::post('restaurants/{restaurant}/toggle-status', [\App\Http\Controllers\Admin\RestaurantController::class, 'toggleStatus'])
-    //     ->name('restaurants.toggle-status');
+    Route::post('restaurants/{restaurant}/approve', [AdminRestaurantController::class, 'approve'])
+        ->name('restaurants.approve');
+    Route::post('restaurants/{restaurant}/toggle-status', [AdminRestaurantController::class, 'toggleStatus'])
+        ->name('restaurants.toggle-status');
 });
 
 Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name('restaurant.')->group(function () {
@@ -62,8 +62,8 @@ Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name
 
     // // Menu items
     Route::resource('menu-items', RestaurantMenuItemController::class);
-    // Route::post('menu-items/{id}/toggle', [\App\Http\Controllers\Restaurant\MenuItemController::class, 'toggle'])
-    //     ->name('menu-items.toggle');
+    Route::post('menu-items/{id}/toggle', [RestaurantMenuItemController::class, 'toggle'])
+        ->name('menu-items.toggle');
 
     Route::post('/toggle-open', function () {
         $restaurant = Auth::user()->restaurant;
@@ -79,3 +79,5 @@ Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent
         return view('agent.dashboard');
     })->name('dashboard');
 });
+
+// pending: Admin/RestaurantController, resources/views/admin/restaurants/index.blade.php, 
