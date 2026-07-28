@@ -103,7 +103,7 @@ class Restaurant extends Model
         });
 
         static::updating(function ($restraurant) {
-            $restraurant->slug = Str::slug($restraurant->name) . '-' . Str::random(5);
+            if ($restraurant->isDirty('name')) $restraurant->slug = Str::slug($restraurant->name) . '-' . Str::random(5);
         });
     }
 }

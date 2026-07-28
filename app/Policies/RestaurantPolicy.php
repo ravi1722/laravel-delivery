@@ -8,11 +8,12 @@ use Illuminate\Auth\Access\Response;
 
 class RestaurantPolicy
 {
-    public function before(User $user, Response $response, Restaurant $restaurant): ?bool {
-        if($user->isAdmin()) {
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->isAdmin()) {
             return true;
         }
-        return false;
+        return null;
     }
     /**
      * Determine whether the user can view any models.
@@ -43,7 +44,7 @@ class RestaurantPolicy
      */
     public function update(User $user, Restaurant $restraurant): bool
     {
-        return $user->id === $restraurant->id;
+        return $user->id === $restraurant->owner_id;
     }
 
     /**

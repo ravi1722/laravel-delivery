@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\RestaurantServiceInterface;
 use App\Repositories\RestaurantRepository;
+use Illuminate\Support\Facades\Storage;
 
 class RestaurantService implements RestaurantServiceInterface
 {
@@ -42,9 +43,31 @@ class RestaurantService implements RestaurantServiceInterface
         // $this->restaurantRepository->clearCache();
 
         return $restaurant;
-
     }
-    public function updateRestaurant(int $id, array $data): mixed {
+    public function updateRestaurant(int $id, array $data): mixed
+    {
+        $restaurant = $this->restaurantRepository->findById($id);
+
+        if (!empty($data['logo'])) {
+            if ($restaurant->logo) {
+                Storage::disk('public')->delete($restaurant->logo);
+            }
+            $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+        }
+
+        if (!empty($data['cover_image'])) {
+            if ($restaurant->cover_image) {
+                Storage::disk('public')->delete($restaurant->cover_image);
+            }
+
+            $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+        }
+
+        $restaurant->update($data);
+
+        // $this->restaurantRepository->clearCache();
+
+        return $restaurant;
 
     }
     // public function deleteRestaurant(int $id): bool {}

@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemVariant extends Model
 {
-    //
+    protected $fillable = ['menu_item_id', 'name', 'price', 'is_available'];
 }

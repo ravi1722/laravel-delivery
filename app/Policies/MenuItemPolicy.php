@@ -8,6 +8,18 @@ use Illuminate\Auth\Access\Response;
 
 class MenuItemPolicy
 {
+    public function before(User $user): ?bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+        return null;
+    }
+
+    public function manage(User $user, MenuItem $item): bool
+    {
+        return $user->restaurant->id === $item->restaurant_id;
+    }
     /**
      * Determine whether the user can view any models.
      */

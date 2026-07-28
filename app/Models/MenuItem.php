@@ -44,26 +44,26 @@ class MenuItem extends Model
     //     return $this->belongsTo(Restaurant::class);
     // }
 
-    // public function category(): BelongsTo
-    // {
-    //     return $this->belongsTo(MenuCategory::class, 'category_id');
-    // }
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(MenuCategory::class, 'category_id');
+    }
 
-    // public function variants(): HasMany
-    // {
-    //     return $this->hasMany(Itemvariant::class);
-    // }
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ItemVariant::class);
+    }
 
-    // public function addons(): HasMany
-    // {
-    //     return $this->hasMany(ItemAddon::class);
-    // }
+    public function addons(): HasMany
+    {
+        return $this->hasMany(ItemAddon::class);
+    }
 
     // scopes
-    // public function scopeAvailable(Builder $query): Builder
-    // {
-    //     return $query->where('is_available', true);
-    // }
+    public function scopeAvailable(Builder $query): Builder
+    {
+        return $query->where('is_available', true);
+    }
 
     // public function scopeVeg(Builder $query): Builder
     // {
@@ -76,10 +76,14 @@ class MenuItem extends Model
     //     return $this->discount_price ?? $this->price;
     // }
 
-    // public static function booted(): void
-    // {
-    //     static::creating(function ($item) {
-    //         $item->slug = Str::slug($item->name) . '-' . Str::random(5);
-    //     });
-    // }
+    public static function booted(): void
+    {
+        static::creating(function ($item) {
+            $item->slug = Str::slug($item->name) . '-' . Str::random(5);
+        });
+
+        static::updating(function ($item) {
+            if ($item->isDirty('name')) $item->slug = Str::slug($item->name) . '-' . Str::random(5);
+        });
+    }
 }

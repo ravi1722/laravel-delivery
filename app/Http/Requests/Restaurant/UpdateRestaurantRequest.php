@@ -5,6 +5,7 @@ namespace App\Http\Requests\Restaurant;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UpdateRestaurantRequest extends FormRequest
 {
@@ -23,12 +24,13 @@ class UpdateRestaurantRequest extends FormRequest
      */
     public function rules(): array
     {
+        $restaurant_id = Auth::user()->restaurant->id;
         return [
             'name'          => ['sometimes', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z0-9\s&\'-]+$/'],
             'description'   => 'sometimes|nullable|string|max:1000',
             'cuisine_type'  => 'sometimes|required|string|max:100',
-            'phone'         => 'sometimes|required|string|regex:/^[6-9]\d{9}$/|unique:restaurants,phone',
-            'email'         => 'sometimes|nullable|email|unique:restaurants,email',
+            'phone'         => ['sometimes', 'required', 'string', 'regex:/^[6-9]\d{9}$/', Rule::unique('restaurants', 'phone')->ignore($restaurant_id)],
+            'email'         => ['sometimes', 'nullable', 'email', Rule::unique('restaurants', 'email')->ignore($restaurant_id)],
             'address'       => 'sometimes|required|string|max:500',
             'city'          => 'sometimes|required|string|max:100',
             'state'         => 'sometimes|required|string|max:100',
