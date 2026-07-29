@@ -269,7 +269,7 @@
                     <div class="dropdown">
                         <button class="btn btn-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
                             data-bs-toggle="dropdown">
-                            <img src="{{ auth()->user()->avatar }}" width="28" height="28"
+                            <img src="{{ Auth::user()->avatar }}" width="28" height="28"
                                 class="rounded-circle object-fit-cover" alt="Avatar">
                             <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                         </button>

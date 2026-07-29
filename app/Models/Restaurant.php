@@ -91,10 +91,10 @@ class Restaurant extends Model
     }
 
     // Accessors
-    // public function logUrl(): string
-    // {
-    //     return $this->logo ? asset('storage/' . $this->logo) : asset('images/default-restaurant.png');
-    // }
+    public function getLogoAttribute(): string
+    {
+        return $this->attributes['logo'] ? asset('storage/' . $this->attributes['logo']) : asset('images/default-restaurant.png');
+    }
 
     protected static function booted(): void
     {
