@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\RestaurantServiceInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
 {
+    public function __construct(private RestaurantServiceInterface $restaurantService) {}
     /**
      * Display a listing of the resource.
      */
-    public function index($status = null)
+    public function index()
     {
-        dd($status);
+        $restaurants = $this->restaurantService->getAllRestaurants(request()->all());
+
+        return view('admin.restaurants.index', compact('restaurants'));
     }
 
     /**

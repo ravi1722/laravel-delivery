@@ -110,8 +110,8 @@ class User extends Authenticatable
     // }
 
     // Accessors
-    public function getAvatarAttiribute() : string
+    public function getAvatarAttribute() : string
     {
-        return $this->avatar ? asset('storage/' . $this->avatar) : asset('images/default-avatar.png');
+        return $this->attributes['avatar'] ? asset('storage/' . $this->attributes['avatar']) : asset('images/default-avatar.png');
     }
 }

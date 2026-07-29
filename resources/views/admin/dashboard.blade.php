@@ -103,7 +103,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="{{ $restaurant->logo_url }}" width="36" height="36"
+                                            <img src="{{ $restaurant->logo }}" width="36" height="36"
                                                 class="rounded-circle object-fit-cover">
                                             <div>
                                                 <div class="fw-semibold small">{{ $restaurant->name }}</div>
