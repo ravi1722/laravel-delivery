@@ -68,10 +68,40 @@ class RestaurantService implements RestaurantServiceInterface
         // $this->restaurantRepository->clearCache();
 
         return $restaurant;
-
     }
-    // public function deleteRestaurant(int $id): bool {}
-    // public function toggleStatus(int $id): mixed {}
-    // public function approveRestaurant(int $id): mixed {}
+    public function deleteRestaurant(int $id): bool
+    {
+        $restaurant = $this->restaurantRepository->findById($id);
+
+        if ($restaurant->logo) {
+            Storage::disk('public')->delete($restaurant->logo);
+        }
+
+        if ($restaurant->cover_image) {
+            Storage::disk('public')->delete($restaurant->cover_image);
+        }
+        $result = $restaurant->delete();
+
+        // $this->repository->clearCache();
+
+        return $result;
+    }
+    public function toggleStatus(int $id): mixed
+    {
+        $restaurant = $this->restaurantRepository->findById($id);
+        $restaurant->update(['is_open' => !$restaurant->is_open]);
+
+        // $this->repository->clearCache();
+
+        return $restaurant->fresh();
+    }
+    public function approveRestaurant(int $id): mixed {
+        $restaurant = $this->restaurantRepository->findById($id);
+        $restaurant->update(['status' => 'active']);
+
+        // $this->repository->clearCache();
+
+        return $restaurant->fresh();
+    }
     // public function getFeaturedRestaurants(): mixed {}
 }

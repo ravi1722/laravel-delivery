@@ -58,8 +58,8 @@ class RestaurantObserver
             'model_type'   => Restaurant::class,
             'model_id'     => $restaurant->id,
             'action'       => $action,
-            'old_values'   => !empty($oldValues) ? $oldValues : null,
-            'new_values'   => $restaurant->toArray(),
+            'old_values'   => !empty($oldValues) ? json_encode($oldValues) : null,
+            'new_values'   => json_encode($restaurant->toArray()),
             'performed_by' => Auth::user()->id,
             'ip_address'   => request()->ip(),
         ]);

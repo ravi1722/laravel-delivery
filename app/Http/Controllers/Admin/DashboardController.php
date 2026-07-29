@@ -32,16 +32,16 @@ class DashboardController extends Controller
 
         $recentOrders = Order::with(['user:id,name', 'restaurant:id,name'])->latest()->limit(10)->get();
 
-        $statusColors = [
-            'placed'    => 'primary',
-            'confirmed' => 'info',
-            'preparing' => 'warning',
-            'ready'     => 'secondary',
-            'picked_up' => 'dark',
-            'delivered' => 'success',
-            'cancelled' => 'danger',
-        ];
+        // $statusColors = [
+        //     'placed'    => 'primary',
+        //     'confirmed' => 'info',
+        //     'preparing' => 'warning',
+        //     'ready'     => 'secondary',
+        //     'picked_up' => 'dark',
+        //     'delivered' => 'success',
+        //     'cancelled' => 'danger',
+        // ];
 
-        return view('admin.dashboard', compact('stats', 'pendingRestaurant', 'recentOrders', 'statusColors'));
+        return view('admin.dashboard', compact('stats', 'pendingRestaurant', 'recentOrders'));
     }
 }

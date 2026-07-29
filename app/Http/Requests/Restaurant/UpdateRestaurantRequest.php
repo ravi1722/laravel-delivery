@@ -24,7 +24,7 @@ class UpdateRestaurantRequest extends FormRequest
      */
     public function rules(): array
     {
-        $restaurant_id = Auth::user()->restaurant->id;
+        $restaurant_id = Auth::user()->role == 'admin' ? $this->route('restaurant')->id : Auth::user()->restaurant->id;
         return [
             'name'          => ['sometimes', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z0-9\s&\'-]+$/'],
             'description'   => 'sometimes|nullable|string|max:1000',

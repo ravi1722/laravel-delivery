@@ -10,4 +10,11 @@ return [
         'delivered' => 'success',
         'cancelled' => 'danger',
     ],
+
+    'colors' => [
+        'pending' => 'warning',
+        'active' => 'success',
+        'inactive' => 'secondary',
+        'suspended' => 'danger',
+    ],
 ];
