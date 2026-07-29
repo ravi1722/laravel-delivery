@@ -92,12 +92,12 @@
                             </td>
                             <td>
                                 @php
-                                    $colors = [
-                                        'pending' => 'warning',
-                                        'active' => 'success',
-                                        'inactive' => 'secondary',
-                                        'suspended' => 'danger',
-                                    ];
+                                    // $colors = [
+                                    //     'pending' => 'warning',
+                                    //     'active' => 'success',
+                                    //     'inactive' => 'secondary',
+                                    //     'suspended' => 'danger',
+                                    // ];
                                 @endphp
                                 <span class="badge bg-{{ $colors[$restaurant->status] }} badge-status">
                                     {{ ucfirst($restaurant->status) }}

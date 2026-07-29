@@ -112,6 +112,6 @@ class User extends Authenticatable
     // Accessors
     public function getAvatarAttribute() : string
     {
-        return $this->attributes['avatar'] ? asset('storage/' . $this->attributes['avatar']) : asset('images/default-avatar.png');
+        return isset($this->attributes['avatar']) ? asset('storage/' . $this->attributes['avatar']) : asset('images/default-avatar.png');
     }
 }
