@@ -12,5 +12,6 @@ interface RestaurantServiceInterface
     public function deleteRestaurant(int $id): bool;
     public function toggleStatus(int $id): mixed;
     public function approveRestaurant(int $id) : mixed;
-    // public function getFeaturedRestaurants(): mixed;
+    public function getFeaturedRestaurants(): mixed;
+    public function getRestaurantCities(): mixed;
 }

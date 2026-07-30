@@ -2,19 +2,20 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Restaurant\DashboardController as RestaurantDashboardController;
 use App\Http\Controllers\Restaurant\MenuCategoryController as RestaurantMenuCategoryController;
 use App\Http\Controllers\Restaurant\MenuItemController as RestaurantMenuItemController;
+use App\Http\Controllers\Customer\HomeController as CustomerHomeController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Restaurant\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ---------------Customer---------------
+Route::get('/', [CustomerHomeController::class,'index'])->name('customer.home');
+Route::get('/restaurants/{restaurant}', [CustomerHomeController::class,'show'])->name('customer.restaurant');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
@@ -33,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+// -------------Admin--------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
@@ -44,6 +46,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         ->name('restaurants.toggle-status');
 });
 
+// --------------restaurant owner---------------
 Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name('restaurant.')->group(function () {
     Route::get('/dashboard', [RestaurantDashboardController::class, 'index'])->name('dashboard');
 
@@ -74,6 +77,7 @@ Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name
     })->name('toggle-open');
 });
 
+// --------Delivery Agent-----------
 Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent.')->group(function () {
     Route::get('/dashboard', function () {
         return view('agent.dashboard');
