@@ -14,7 +14,7 @@ class CartService implements CartServiceInterface
      */
     public function __construct()
     {
-        $this->cartKey = (Auth::check()) ?  "cart_". Auth::user()->id : "cart_". Str::random(5);
+        $this->cartKey = (Auth::check()) ?  "cart_". Auth::user()->id : 'cart_guest_' . session()->getId();
     }
 
     public function getCart(): array {
