@@ -95,7 +95,8 @@ class RestaurantService implements RestaurantServiceInterface
 
         return $restaurant->fresh();
     }
-    public function approveRestaurant(int $id): mixed {
+    public function approveRestaurant(int $id): mixed
+    {
         $restaurant = $this->restaurantRepository->findById($id);
         $restaurant->update(['status' => 'active']);
 
@@ -103,5 +104,12 @@ class RestaurantService implements RestaurantServiceInterface
 
         return $restaurant->fresh();
     }
-    // public function getFeaturedRestaurants(): mixed {}
+    public function getFeaturedRestaurants(): mixed
+    {
+        return $this->restaurantRepository->getFeatured();
+    }
+
+    public function getRestaurantCities () : mixed {
+        return $this->restaurantRepository->getRestaurantCities();
+    }
 }
