@@ -44,7 +44,7 @@ class HomeController extends Controller
         $restaurant->loadCount('reviews');
         $categories = $this->menuService->getCategoriesByRestaurant($restaurant->id);
         $cart = $this->cartService->getCart();
-        dd($cart);
-        dd($restaurant->toArray());
+
+        return view('customer.restaurant', compact('restaurant','categories','cart'));
     }
 }
