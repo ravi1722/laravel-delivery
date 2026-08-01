@@ -91,15 +91,7 @@
                                 </span>
                             </td>
                             <td>
-                                @php
-                                    // $colors = [
-                                    //     'pending' => 'warning',
-                                    //     'active' => 'success',
-                                    //     'inactive' => 'secondary',
-                                    //     'suspended' => 'danger',
-                                    // ];
-                                @endphp
-                                <span class="badge bg-{{ $colors[$restaurant->status] }} badge-status">
+                                <span class="badge bg-{{ config('constants.colors')[$restaurant->status] }} badge-status">
                                     {{ ucfirst($restaurant->status) }}
                                 </span>
                             </td>

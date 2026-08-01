@@ -9,7 +9,7 @@ interface CartServiceInterface
     // public function updateItem(string $cartItemId, int $quantity): array;
     // public function removeItem(string $cartItemId): array;
     // public function clearCart(): void;
-    // public function getCartCount(): int;
+    public function getCartCount(): int;
     // public function getCartTotal(): float;
     // public function getRestaurantId(): ?int;
 }

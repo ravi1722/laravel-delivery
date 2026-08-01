@@ -14,10 +14,16 @@ class CartService implements CartServiceInterface
      */
     public function __construct()
     {
-        $this->cartKey = (Auth::check()) ?  "cart_". Auth::user()->id : 'cart_guest_' . session()->getId();
+        $this->cartKey = (Auth::check()) ?  "cart_" . Auth::user()->id : 'cart_guest_' . session()->getId();
     }
 
-    public function getCart(): array {
-        return session($this->cartKey , []);
+    public function getCart(): array
+    {
+        return session($this->cartKey, []);
+    }
+
+    public function getCartCount(): int
+    {
+        return 1;
     }
 }

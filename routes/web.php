@@ -8,15 +8,65 @@ use App\Http\Controllers\Restaurant\MenuItemController as RestaurantMenuItemCont
 use App\Http\Controllers\Customer\HomeController as CustomerHomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Customer\AddressController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Restaurant\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ---------------Customer---------------
-Route::get('/', [CustomerHomeController::class,'index'])->name('customer.home');
-Route::get('/restaurants/{restaurant}', [CustomerHomeController::class,'show'])->name('customer.restaurant');
+Route::get('/', [CustomerHomeController::class, 'index'])->name('customer.home');
+Route::get('/restaurants/{restaurant}', [CustomerHomeController::class, 'show'])->name('customer.restaurant');
 
+// ── Authenticated Routes ───────────────────────────
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Cart
+    Route::prefix('cart')->name('customer.cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        // Route::post('/add', [CartController::class, 'add'])
+        //     ->name('add');
+        // Route::put('/{cartItemId}', [CartController::class, 'update'])
+        //     ->name('update');
+        // Route::delete('/{cartItemId}', [CartController::class, 'remove'])
+        //     ->name('remove');
+        // Route::delete('/', [CartController::class, 'clear'])
+        //     ->name('clear');
+    });
+
+    // Addresses
+    Route::prefix('addresses')->name('customer.addresses.')->group(function () {
+        Route::get('/', [AddressController::class, 'index'])->name('index');
+        // Route::post('/', [AddressController::class, 'store'])
+        //     ->name('store');
+        // Route::put('/{id}', [AddressController::class, 'update'])
+        //     ->name('update');
+        // Route::delete('/{id}', [AddressController::class, 'destroy'])
+        //     ->name('destroy');
+        // Route::post('/{id}/default', [AddressController::class, 'setDefault'])
+        //     ->name('set-default');
+    });
+
+    // Orders
+    Route::prefix('orders')->name('customer.orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        // Route::get('/checkout', [OrderController::class, 'checkout'])
+        //      ->name('checkout');
+        // Route::post('/', [OrderController::class, 'store'])
+        //      ->name('store');
+        // Route::get('/{order}', [OrderController::class, 'show'])
+        //      ->name('show');
+        // Route::post('/{order}/cancel', [OrderController::class, 'cancel'])
+        //      ->name('cancel');
+        // Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])
+        //      ->name('apply-coupon');
+    });
+});
+
+// ------------- Login - Register ------------
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
@@ -27,11 +77,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-});
-
-// ── Authenticated Routes ───────────────────────────
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 // -------------Admin--------------------

@@ -14,6 +14,8 @@ use App\Services\CartService;
 use App\Services\MenuService;
 use App\Services\OrderService;
 use App\Services\RestaurantService;
+use App\View\Composers\SidebarComposer;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -36,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Restaurant::observe(RestaurantObserver::class);
+        View::composer("partials.sidebar-customer", SidebarComposer::class);    //partials.sidebar-customer load ஆகும் போதெல்லாம் service automatically call ஆகும்
     }
 }
