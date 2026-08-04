@@ -72,7 +72,7 @@
             <i class="bi bi-bag-x fs-1 d-block mb-2 opacity-25"></i>
             No orders yet. Start ordering your favorite food!
             <br>
-            <a href="#" class="btn btn-primary mt-3">Browse Restaurants</a>
+            <a href="{{ route('customer.home') }}" class="btn btn-primary mt-3">Browse Restaurants</a>
         </div>
     </div>
 @endsection

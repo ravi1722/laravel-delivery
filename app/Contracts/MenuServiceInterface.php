@@ -14,4 +14,7 @@ interface MenuServiceInterface
     public function updateItem(int $id, array $data): mixed;
     public function deleteItem(int $id): bool;
     public function toggleItemAvailability(int $id): mixed;
+    public function getMenuItemById(int $id): mixed;
+    public function getItemVariantById(int $id): mixed;
+    public function getAddonsByIds(array $ids): mixed;
 }

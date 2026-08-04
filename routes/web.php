@@ -27,10 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Cart
     Route::prefix('cart')->name('customer.cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
-        // Route::post('/add', [CartController::class, 'add'])
-        //     ->name('add');
-        // Route::put('/{cartItemId}', [CartController::class, 'update'])
-        //     ->name('update');
+        Route::post('/add', [CartController::class, 'add'])->name('add');
+        Route::put('/{cartItemId}', [CartController::class, 'update'])->name('update');
         // Route::delete('/{cartItemId}', [CartController::class, 'remove'])
         //     ->name('remove');
         // Route::delete('/', [CartController::class, 'clear'])
@@ -40,29 +38,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Addresses
     Route::prefix('addresses')->name('customer.addresses.')->group(function () {
         Route::get('/', [AddressController::class, 'index'])->name('index');
-        // Route::post('/', [AddressController::class, 'store'])
-        //     ->name('store');
-        // Route::put('/{id}', [AddressController::class, 'update'])
-        //     ->name('update');
-        // Route::delete('/{id}', [AddressController::class, 'destroy'])
-        //     ->name('destroy');
-        // Route::post('/{id}/default', [AddressController::class, 'setDefault'])
-        //     ->name('set-default');
+        Route::post('/', [AddressController::class, 'store'])->name('store');
+        Route::put('/{id}', [AddressController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AddressController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/default', [AddressController::class, 'setDefault'])->name('set-default');
     });
 
     // Orders
     Route::prefix('orders')->name('customer.orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
-        // Route::get('/checkout', [OrderController::class, 'checkout'])
-        //      ->name('checkout');
-        // Route::post('/', [OrderController::class, 'store'])
-        //      ->name('store');
-        // Route::get('/{order}', [OrderController::class, 'show'])
-        //      ->name('show');
+        Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         // Route::post('/{order}/cancel', [OrderController::class, 'cancel'])
         //      ->name('cancel');
-        // Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])
-        //      ->name('apply-coupon');
+        Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply-coupon');
     });
 });
 

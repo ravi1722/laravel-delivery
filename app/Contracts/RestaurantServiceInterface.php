@@ -5,7 +5,7 @@ namespace App\Contracts;
 interface RestaurantServiceInterface
 {
     public function getAllRestaurants(array $filters = []): mixed;
-    // public function getRestaurantById(int $id): mixed;
+    public function getRestaurantById(int $id): mixed;
     public function getRestaurantByOwner(int $ownerId): mixed;
     public function createRestaurant(array $data): mixed;
     public function updateRestaurant(int $id, array $data): mixed;

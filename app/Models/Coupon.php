@@ -24,21 +24,21 @@ class Coupon extends Model
         'expires_at',
     ];
 
-    // protected $casts = [
-    //     'is_active' => 'boolean',
-    //     'starts_at' => 'datetime',
-    //     'expires_at' => 'datetime'
-    // ];
+    protected $casts = [
+        'is_active' => 'boolean',
+        'starts_at' => 'datetime',
+        'expires_at' => 'datetime'
+    ];
 
-    // public function usages(): HasMany
-    // {
-    //     return $this->hasMany(CouponUsage::class);
-    // }
+    public function usages(): HasMany
+    {
+        return $this->hasMany(CouponUsage::class);
+    }
 
-    // public function scopeActive(Builder $query): Builder
-    // {
-    //     return $query->where('active', true)->where(function ($q) {
-    //         $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-    //     });
-    // }
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true)->where(function ($q) {
+            $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+        });
+    }
 }

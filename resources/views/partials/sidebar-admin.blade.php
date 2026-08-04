@@ -4,7 +4,7 @@
 </a>
 
 <div class="nav-section-title">Management</div>
-<a href="#" class="nav-link">
+<a href="{{ route('admin.restaurants.index') }}" class="nav-link">
     <i class="bi bi-shop"></i> Restaurants
 </a>
 <a href="#" class="nav-link">
