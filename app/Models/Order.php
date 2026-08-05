@@ -104,8 +104,8 @@ class Order extends Model
     //     return $this->status === 'cancelled';
     // }
 
-    // public function canBeCancelled(): bool
-    // {
-    //     return in_array($this->status, ['placed', 'confirmed']);
-    // }
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, ['placed', 'confirmed']);
+    }
 }

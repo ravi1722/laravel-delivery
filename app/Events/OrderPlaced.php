@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,10 +18,7 @@ class OrderPlaced
     /**
      * Create a new event instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public readonly Order $order) {}
 
     /**
      * Get the channels the event should broadcast on.

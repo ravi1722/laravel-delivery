@@ -29,10 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add', [CartController::class, 'add'])->name('add');
         Route::put('/{cartItemId}', [CartController::class, 'update'])->name('update');
-        // Route::delete('/{cartItemId}', [CartController::class, 'remove'])
-        //     ->name('remove');
-        // Route::delete('/', [CartController::class, 'clear'])
-        //     ->name('clear');
+        Route::delete('/{cartItemId}', [CartController::class, 'remove'])->name('remove');
+        Route::delete('/', [CartController::class, 'clear'])->name('clear');
     });
 
     // Addresses
@@ -50,8 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
         Route::post('/', [OrderController::class, 'store'])->name('store');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-        // Route::post('/{order}/cancel', [OrderController::class, 'cancel'])
-        //      ->name('cancel');
+        Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
         Route::post('/apply-coupon', [OrderController::class, 'applyCoupon'])->name('apply-coupon');
     });
 });

@@ -22,7 +22,8 @@ class OrderController extends Controller
     ) {}
     public function index()
     {
-        $orders = $this->orderService->getOrdersByUser(Auth::user()->id);
+        $get_orders = $this->orderService->getOrdersByUser(Auth::user()->id);
+        $orders = $get_orders->paginate(10);
         return view('customer.orders.index', compact('orders'));
     }
 
@@ -52,19 +53,28 @@ class OrderController extends Controller
         }
 
         $order->load([
-            // 'orderItems.menuItem',
+            'orderItems.menuItem',
             'restaurant:id,name,logo,phone,address',
             'address',
             'statusHistories' => fn($q) => $q->orderBy('created_at'),
         ]);
+        // dd($order->toArray());
 
-        return view('customer.orders.show', compact('order'));
+        $allStatuses = ['placed', 'confirmed', 'preparing', 'ready', 'picked_up', 'delivered'];
+        $statusLabels = [
+            'placed'    => ['label' => 'Order Placed', 'icon' => 'bi-bag-check'],
+            'confirmed' => ['label' => 'Confirmed', 'icon' => 'bi-check-circle'],
+            'preparing' => ['label' => 'Preparing', 'icon' => 'bi-fire'],
+            'ready'     => ['label' => 'Ready', 'icon' => 'bi-box-seam'],
+            'picked_up' => ['label' => 'Picked Up', 'icon' => 'bi-truck'],
+            'delivered' => ['label' => 'Delivered', 'icon' => 'bi-house-check'],
+        ];
+
+        return view('customer.orders.show', compact('order', 'allStatuses', 'statusLabels'));
     }
 
     public function checkout()
     {
-        // OrderPlaced::dispatch($order);
-        // dd(123);
         $cart = $this->cartService->getCart();
 
         if (empty($cart['items'])) {
@@ -111,6 +121,26 @@ class OrderController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 422);
+        }
+    }
+
+    public function cancel(Request $request, Order $order)
+    {
+
+        if ($order->user_id != Auth::user()->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $this->orderService->cancelOrder($order->id, $request->reason);
+
+            return back()->with('success', 'Order cancelled successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 }

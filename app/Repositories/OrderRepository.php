@@ -21,8 +21,12 @@ class OrderRepository
     public function getOrdersByUser(int $userId): mixed
     {
         return Order::with(['restaurant:id,name,logo', 'orderItems'])->forUser($userId)
-            ->latest()
-            ->paginate(10);
+            ->latest();
+    }
+
+    public function getOrderById(int $orderId)
+    {
+        return Order::findOrFail($orderId);
     }
 
     public function getCoupon(string $code)

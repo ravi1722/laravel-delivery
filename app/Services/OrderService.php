@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Contracts\CartServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\RestaurantServiceInterface;
+use App\Events\OrderCancelled;
+use App\Events\OrderPlaced;
+use App\Events\OrderStatusChanged;
 use App\Repositories\OrderRepository;
 use Illuminate\Support\Facades\Auth;
 
@@ -97,7 +100,25 @@ class OrderService implements OrderServiceInterface
         // Clear cart after successful order
         $this->cartService->clearCart();
         // Fire event — listeners handle email, notifications, restaurant alert
-        // OrderPlaced::dispatch($order);
+        OrderPlaced::dispatch($order);
+
+        return $order;
+    }
+
+    public function cancelOrder(int $orderId, string $reason): mixed
+    {
+        $order = $this->orderRepository->getOrderById($orderId);
+
+        if (!$order->canBeCancelled()) {
+            throw new \Exception('This order cannot be cancelled at this stage.');
+        }
+        $previousStatus = $order->status;
+        $order->update(['status' => 'cancelled']);
+        // Log status change
+        event(new OrderStatusChanged($order, $previousStatus, 'cancelled'));
+
+        // Fire cancellation event — handles refund logic
+        OrderCancelled::dispatch($order, $reason);
 
         return $order;
     }

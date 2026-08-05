@@ -71,4 +71,21 @@ class CartController extends Controller
             'cart_total' => $this->cartService->getCartTotal(),
         ]);
     }
+
+    public function remove(string $cartItemId)
+    {
+        $this->cartService->removeItem($cartItemId);
+
+        return response()->json([
+            'success'    => true,
+            'cart_count' => $this->cartService->getCartCount(),
+            'cart_total' => $this->cartService->getCartTotal(),
+        ]);
+    }
+
+    public function clear()
+    {
+        $this->cartService->clearCart();
+        // return redirect()->route('cart.index');
+    }
 }
