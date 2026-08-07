@@ -7,10 +7,10 @@
 <a href="#" class="nav-link">
     <i class="bi bi-shop"></i> Restaurant Profile
 </a>
-<a href="#" class="nav-link">
+<a href="{{ route('restaurant.menu-categories.index') }}" class="nav-link">
     <i class="bi bi-list-ul"></i> Menu Categories
 </a>
-<a href="#" class="nav-link">
+<a href="{{ route('restaurant.menu-items.index') }}" class="nav-link">
     <i class="bi bi-egg-fried"></i> Menu Items
 </a>
 

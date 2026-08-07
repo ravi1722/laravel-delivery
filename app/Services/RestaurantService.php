@@ -18,11 +18,6 @@ class RestaurantService implements RestaurantServiceInterface
         return $this->restaurantRepository->getAll($filters);
     }
 
-    // public function getRestaurantById(int $id): mixed
-    // {
-    //     //
-    // }
-
     public function getRestaurantByOwner(int $ownerId): mixed
     {
         return $this->restaurantRepository->findByOwner($ownerId);
@@ -111,5 +106,10 @@ class RestaurantService implements RestaurantServiceInterface
 
     public function getRestaurantCities () : mixed {
         return $this->restaurantRepository->getRestaurantCities();
+    }
+
+    public function getRestaurantById(int $id): mixed
+    {
+        return $this->restaurantRepository->findById($id);
     }
 }

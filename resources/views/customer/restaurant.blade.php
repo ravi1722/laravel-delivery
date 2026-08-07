@@ -73,7 +73,7 @@
                     <div class="menu-section mb-4" id="category-{{ $category->id }}">
                         <h6 class="fw-semibold mb-3 px-1">{{ $category->name }}</h6>
                         <div class="table-card">
-                            @foreach ($category->items->where('is_available', true) as $item)
+                            @foreach ($category->items as $item)
                                 <div class="p-3 border-bottom menu-item-row" data-category="{{ $category->id }}">
                                     <div class="d-flex gap-3">
                                         {{-- Image --}}
@@ -231,3 +231,79 @@
 
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $('.category-tab').on('click', function() {
+            let categoryId = $(this).data('category');
+            $('.category-tab').removeClass('btn-primary').addClass('btn-outline-secondary');
+            $(this).addClass('btn-primary').removeClass('btn-outline-secondary');
+            $(`#category-${categoryId}`)[0].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        $('.add-to-cart').on('click', function() {
+            const button = $(this);
+            const itemId = button.data('item-id');
+            const itemName = button.data('item-id');
+            button.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i>');
+
+            $.post('{{ route('customer.cart.add') }}', {
+                menu_item_id: itemId,
+                quantity: 1
+            }, function(response) {
+                if (response.success) {
+                    console.log("success  => ", response);
+                    // Update cart count in navbar
+                    $('#notificationCount').text(response.cart_count);
+                    showToast(`${itemName} added to cart!`, 'success');
+
+                    // Refresh cart sidebar
+                    location.reload();
+                }
+            }).fail(function(xhr) {
+                console.log("fail ", xhr);
+                const msg = xhr.responseJSON?.message || 'Failed to add item';
+                showToast(msg, 'danger');
+            }).always(function() {
+                btn.prop('disabled', false).html('<i class="bi bi-plus-lg"></i> Add');
+            });
+        });
+
+        // Qty buttons
+        $(document).on('click', '.qty-btn', function() {
+            const action = $(this).data('action');
+            const id = $(this).data('id');
+            const qty = parseInt($(this).data('qty'));
+            const newQty = action === 'increase' ? qty + 1 : qty - 1;
+
+            $.ajax({
+                url: `/cart/${id}`,
+                type: 'PUT',
+                data: {
+                    quantity: newQty >= 0 ? newQty : 0
+                },
+                success: function(response) {
+                    location.reload();
+                }
+            });
+        });
+
+        // Toast helper
+        function showToast(message, type = 'success') {
+            const toast = `<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+                <div class="toast show align-items-center text-white bg-${type} border-0">
+                    <div class="d-flex">
+                        <div class="toast-body small">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                onclick="this.closest('.position-fixed').remove()"></button>
+                    </div>
+                </div>
+            </div>`;
+            $('body').append(toast);
+            setTimeout(() => $('.position-fixed').last().remove(), 3000);
+        }
+    </script>
+@endpush

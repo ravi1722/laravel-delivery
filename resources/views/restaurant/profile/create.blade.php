@@ -10,7 +10,7 @@
             <div class="alert alert-info d-flex align-items-center gap-3 mb-4">
                 <i class="bi bi-info-circle-fill fs-4"></i>
                 <div>
-                    <strong>Welcome to QuickBite!</strong>
+                    <strong>Welcome to Laravel-Delivery!</strong>
                     Fill in your restaurant details below. Your restaurant will be
                     reviewed and activated by our admin team within 24 hours.
                 </div>

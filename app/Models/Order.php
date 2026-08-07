@@ -47,25 +47,25 @@ class Order extends Model
         return $this->belongsTo(Restaurant::class);
     }
 
-    // public function address(): BelongsTo
-    // {
-    //     return $this->belongsTo(Address::class);
-    // }
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(Address::class);
+    }
 
     // public function deliveryAgent(): BelongsTo
     // {
     //     return $this->belongsTo(DeliveryAgent::class);
     // }
 
-    // public function orderItems(): HasMany
-    // {
-    //     return $this->hasMany(OrderItem::class);
-    // }
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
-    // public function statusHistories(): HasMany
-    // {
-    //     return $this->hasMany(OrderStatusHistory::class);
-    // }
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(OrderStatusHistory::class);
+    }
 
     // public function coupon(): BelongsTo
     // {
@@ -78,10 +78,10 @@ class Order extends Model
     // }
 
     // scopes
-    // public function scopeForUser(Builder $query, int $user_id): Builder
-    // {
-    //     return $query->where('user_id', '=', $user_id);
-    // }
+    public function scopeForUser(Builder $query, int $user_id): Builder
+    {
+        return $query->where('user_id', '=', $user_id);
+    }
 
     public function scopeForRestaurant(Builder $query, int $restraurant_id): Builder
     {
@@ -104,8 +104,8 @@ class Order extends Model
     //     return $this->status === 'cancelled';
     // }
 
-    // public function canBeCancelled(): bool
-    // {
-    //     return in_array($this->status, ['placed', 'confirmed']);
-    // }
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, ['placed', 'confirmed']);
+    }
 }

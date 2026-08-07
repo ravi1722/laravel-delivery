@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\ItemVariant;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 
@@ -9,7 +10,13 @@ class MenuRepository
 {
     public function getMenuCategory(int $restaurantId)
     {
-        return MenuCategory::withCount("items")->where("restaurant_id", $restaurantId)->active()->orderBy('sort_order')->get();
+        return MenuCategory::with([
+            'items' => fn($q) => $q->available()
+        ])
+            ->withCount([
+                'items' => fn($q) => $q->available()
+            ])
+            ->where("restaurant_id", $restaurantId)->active()->orderBy('sort_order')->get();
     }
 
     public function getMenuCategoryById(int $categoryId)
@@ -48,5 +55,14 @@ class MenuRepository
     public function getMenuItem(int $id)
     {
         return MenuItem::findOrFail($id);
+    }
+
+    public function getItemVariant(int $id)
+    {
+        return ItemVariant::findOrFail($id);
+    }
+
+    public function getAddons(array $ids) {
+        return "";
     }
 }

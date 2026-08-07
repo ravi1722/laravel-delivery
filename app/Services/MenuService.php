@@ -145,6 +145,19 @@ class MenuService implements MenuServiceInterface
         return $item->fresh();
     }
 
+    public function getMenuItemById(int $id): mixed
+    {
+        return $this->menuRepository->getMenuItem($id);
+    }
+
+    public function getItemVariantById(int $id): mixed {
+        return $this->menuRepository->getItemVariant($id);
+    }
+
+    public function getAddonsByIds(array $ids): mixed {
+        return $this->menuRepository->getAddons($ids);
+    }
+
     private function clearMenuCache(int $restaurantId): void
     {
         Cache::tags([self::CACHE_TAG])->flush();
