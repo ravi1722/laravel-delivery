@@ -122,4 +122,51 @@ class OrderService implements OrderServiceInterface
 
         return $order;
     }
+
+    public function getOrdersByRestaurant(int $restaurantId, array $filters): mixed
+    {
+        $orders = $this->orderRepository->getOrdersByRestaurant($restaurantId);
+
+        $query = $orders->with(['user:id,name,phone', 'orderItems', 'address']);
+
+        if (!empty($filters['status'])) {
+            $query = $query->forStatus($filters['status']);
+        }
+
+        if (!empty($filters['date'])) {
+            $query = $query->whereDate('created_at', $filters['date']);
+        }
+        return $query->latest()->paginate(15);
+    }
+
+    public function updateOrderStatus(int $orderId, string $status): mixed
+    {
+        $order = $this->orderRepository->getOrderById($orderId);
+        $validTransitions = [
+            'placed'    => ['confirmed', 'cancelled'],
+            'confirmed' => ['preparing', 'cancelled'],
+            'preparing' => ['ready'],
+            'ready'     => ['picked_up'],
+            'picked_up' => ['delivered'],
+        ];
+
+        $allowedStatuses = $validTransitions[$order->status] ?? [];
+        if (!in_array($status, $allowedStatuses)) {
+            throw new \Exception(
+                "Cannot transition order from '{$order->status}' to '{$status}'."
+            );
+        }
+        $previousStatus = $order->status;
+        $updateData = ['status' => $status];
+        if ($status === 'delivered') {
+            $updateData['delivered_at']     = now();
+            $updateData['payment_status']   = 'paid';
+        }
+
+        $order->update($updateData);
+        // Fire event — logs history automatically
+        event(new OrderStatusChanged($order, $previousStatus, $status));
+
+        return $order->fresh();
+    }
 }

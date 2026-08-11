@@ -24,6 +24,10 @@ class OrderRepository
             ->latest();
     }
 
+    public function getOrdersByRestaurant(int $restaurantId) : mixed {
+        return Order::forRestaurant($restaurantId);
+    }
+
     public function getOrderById(int $orderId)
     {
         return Order::findOrFail($orderId);

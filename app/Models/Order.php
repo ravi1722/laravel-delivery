@@ -88,10 +88,10 @@ class Order extends Model
         return $query->where('restaurant_id', $restraurant_id);
     }
 
-    // public function scopeForStatus(Builder $query, string $status): Builder
-    // {
-    //     return $query->where('status', $status);
-    // }
+    public function scopeForStatus(Builder $query, string $status): Builder
+    {
+        return $query->where('status', $status);
+    }
 
     // Helpers
     // public function isDelivered(): bool

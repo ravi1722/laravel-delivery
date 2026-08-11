@@ -163,7 +163,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($recentOrders as $orders)
+                            @forelse ($recentOrders as $order)
                                 <tr>
                                     <td class="small fw-semibold">#{{ $order->order_number }}</td>
                                     <td class="small">{{ $order->user->name }}</td>

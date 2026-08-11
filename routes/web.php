@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Restaurant\OrderController as RestaurantOrderController;
 use App\Http\Controllers\Restaurant\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -107,6 +108,12 @@ Route::middleware(['auth', 'role:restaurant_owner'])->prefix('restaurant')->name
         ]);
         return back();
     })->name('toggle-open');
+
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [RestaurantOrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [RestaurantOrderController::class, 'show'])->name('show');
+        Route::post('/{order}/status', [RestaurantOrderController::class, 'updateStatus'])->name('update-status');
+    });
 });
 
 // --------Delivery Agent-----------
@@ -114,6 +121,19 @@ Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent
     Route::get('/dashboard', function () {
         return view('agent.dashboard');
     })->name('dashboard');
+});
+
+// Notifications
+Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('index');
+    // Route::get('/unread', [\App\Http\Controllers\NotificationController::class, 'unread'])
+    //     ->name('unread');
+    // Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
+    //     ->name('read');
+    // Route::post('/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
+    //     ->name('read-all');
+    // Route::delete('/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])
+    //     ->name('destroy');
 });
 
 // pending: Admin/RestaurantController, resources/views/admin/restaurants/index.blade.php, 

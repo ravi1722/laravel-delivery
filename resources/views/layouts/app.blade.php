@@ -259,10 +259,39 @@
                     <h6 class="mb-0 fw-semibold text-dark">@yield('page-title', 'Dashboard')</h6>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Notification Bell -->
-                    <div class="notification-bell" id="notificationBell">
-                        <i class="bi bi-bell fs-5 text-secondary"></i>
-                        <span class="notification-badge" id="notificationCount">0</span>
+                    {{-- Notification Bell --}}
+                    <div class="dropdown">
+                        <div class="notification-bell" data-bs-toggle="dropdown" id="notificationBell"
+                            style="cursor:pointer">
+                            <i class="bi bi-bell fs-5 text-secondary"></i>
+                            <span class="notification-badge" id="notificationCount" style="display:none">0</span>
+                        </div>
+
+                        {{-- Notification Dropdown --}}
+                        <div class="dropdown-menu dropdown-menu-end p-0"
+                            style="width:320px;max-height:400px;overflow-y:auto">
+                            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                                <h6 class="fw-semibold mb-0 small">Notifications</h6>
+                                <button class="btn btn-xs btn-outline-secondary" id="markAllRead"
+                                    style="font-size:11px;padding:2px 8px">
+                                    Mark all read
+                                </button>
+                            </div>
+
+                            <div id="notificationList">
+                                <div class="p-3 text-center text-muted small">
+                                    <i class="bi bi-bell-slash d-block mb-1 fs-4 opacity-25"></i>
+                                    No new notifications
+                                </div>
+                            </div>
+
+                            <div class="p-2 border-top text-center">
+                                <a href="{{ route('notifications.index') }}"
+                                    class="small text-primary text-decoration-none">
+                                    View all notifications
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- User Menu -->
@@ -355,6 +384,21 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        // Notification sound
+        // function playNotificationSound() {
+        //     try {
+        //         const ctx = new(window.AudioContext || window.webkitAudioContext)();
+        //         const osc = ctx.createOscillator();
+        //         const gain = ctx.createGain();
+        //         osc.connect(gain);
+        //         gain.connect(ctx.destination);
+        //         osc.frequency.value = 800;
+        //         gain.gain.value = 0.3;
+        //         osc.start();
+        //         osc.stop(ctx.currentTime + 0.2);
+        //     } catch (e) {}
+        // }
     </script>
 
     @stack('scripts')
