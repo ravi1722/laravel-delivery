@@ -11,10 +11,7 @@
     <i class="bi bi-people"></i> Users
 </a>
 <a href="#" class="nav-link">
-    <i class="bi bi-box-seam"></i> Orders
-</a>
-<a href="#" class="nav-link">
-    <i class="bi bi-truck"></i> Delivery Agents
+    <i class="bi bi-bag"></i> Orders
 </a>
 
 <div class="nav-section-title">Marketing</div>
@@ -26,14 +23,11 @@
 <a href="#" class="nav-link">
     <i class="bi bi-bar-chart"></i> Analytics
 </a>
-<a href="#" class="nav-link">
-    <i class="bi bi-download"></i> Exports
-</a>
 
 <div class="nav-section-title">System</div>
-<a href="#" class="nav-link">
-    <i class="bi bi-gear"></i> Settings
+<a href="/horizon" class="nav-link" target="_blank">
+    <i class="bi bi-speedometer"></i> Horizon
 </a>
-<a href="#" class="nav-link">
-    <i class="bi bi-clock-history"></i> Activity Logs
+<a href="{{ route('notifications.index') }}" class="nav-link">
+    <i class="bi bi-bell"></i> Notifications
 </a>

@@ -29,3 +29,21 @@
 <a href="#" class="nav-link">
     <i class="bi bi-star"></i> Reviews
 </a>
+
+<div class="nav-section-title">Menu</div>
+<a href="{{ route('restaurant.menu-categories.index') }}" class="nav-link">
+    <i class="bi bi-list-ul"></i> Categories
+</a>
+<a href="{{ route('restaurant.menu-items.index') }}" class="nav-link">
+    <i class="bi bi-egg-fried"></i> Menu Items
+</a>
+
+<div class="nav-section-title">Restaurant</div>
+<a href="{{ route('restaurant.profile.edit') }}" class="nav-link">
+    <i class="bi bi-shop"></i> My Profile
+</a>
+
+<div class="nav-section-title">Account</div>
+<a href="{{ route('notifications.index') }}" class="nav-link">
+    <i class="bi bi-bell"></i> Notifications
+</a>
