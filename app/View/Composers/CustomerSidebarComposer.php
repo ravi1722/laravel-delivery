@@ -5,11 +5,15 @@ namespace App\View\Composers;
 use App\Contracts\CartServiceInterface;
 use Illuminate\View\View;
 
-class SidebarComposer
+class CustomerSidebarComposer
 {
-    public function __construct(
-        protected CartServiceInterface $cartService
-    ) {}
+    /**
+     * Create a new class instance.
+     */
+    public function __construct(protected CartServiceInterface $cartService)
+    {
+        //
+    }
 
     public function compose(View $view)
     {
