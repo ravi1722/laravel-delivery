@@ -365,6 +365,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script>
+        // ── Laravel Echo Setup ──────────────────────────────────────────
+        // window.Echo = new Echo({});
         // Sidebar toggle (mobile)
         $('#sidebarToggle').click(function() {
             $('#sidebar').toggleClass('open');
@@ -386,19 +388,42 @@
         });
 
         // Notification sound
-        // function playNotificationSound() {
-        //     try {
-        //         const ctx = new(window.AudioContext || window.webkitAudioContext)();
-        //         const osc = ctx.createOscillator();
-        //         const gain = ctx.createGain();
-        //         osc.connect(gain);
-        //         gain.connect(ctx.destination);
-        //         osc.frequency.value = 800;
-        //         gain.gain.value = 0.3;
-        //         osc.start();
-        //         osc.stop(ctx.currentTime + 0.2);
-        //     } catch (e) {}
-        // }
+        function playNotificationSound() {
+            try {
+                const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 800;
+                gain.gain.value = 0.3;
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) {}
+        }
+
+        // Real-time toast for order updates
+        function showOrderToast(message, status) {
+            const colors = @json(config('constants.status_colors'));
+            const color = colors[status] || 'primary';
+
+            const toast = `
+            <div class="position-fixed top-0 end-0 p-3" style="z-index:9999;margin-top:70px">
+                <div class="toast show align-items-center text-white bg-${color} border-0 shadow">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-bag me-2"></i>${message}
+                        </div>
+                        <button type="button"
+                                class="btn-close btn-close-white me-2 m-auto"
+                                onclick="this.closest('.position-fixed').remove()">
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+            $('body').append(toast);
+            setTimeout(() => $('.position-fixed').last().remove(), 5000);
+        }
     </script>
 
     @stack('scripts')

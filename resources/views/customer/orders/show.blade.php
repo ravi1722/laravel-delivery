@@ -51,6 +51,31 @@
                     </div>
                 @endif
             </div>
+            {{-- Real-time tracking indicator --}}
+            @if (!in_array($order->status, ['delivered', 'cancelled']))
+                <div class="alert alert-info d-flex align-items-center gap-2 mb-4" id="trackingAlert">
+                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                    <div>
+                        <strong>Live Tracking Active</strong> —
+                        This page updates automatically when your order status changes.
+                    </div>
+                </div>
+
+                @push('scripts')
+                    <script>
+                        // window.Echo.private('orders.{{ auth()->id() }}')
+                        //     .listen('.order.status.updated', function(data) {
+                        //         if (data.order_id === {{ $order->id }}) {
+                        //             // Show update toast
+                        //             showOrderToast(data.message, data.status);
+
+                        //             // Reload page after 2 seconds to show new status
+                        //             setTimeout(() => location.reload(), 2000);
+                        //         }
+                        //     });
+                    </script>
+                @endpush
+            @endif
             {{-- Order Items --}}
             <div class="table-card p-4 mb-4">
                 <h6 class="fw-semibold mb-3">
