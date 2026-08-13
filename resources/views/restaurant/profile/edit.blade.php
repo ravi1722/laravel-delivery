@@ -136,7 +136,7 @@
                             <label class="form-label fw-semibold small">Logo</label>
                             @if ($restaurant->logo)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $restaurant->logo) }}" width="64" height="64"
+                                    <img src="{{ $restaurant->logo }}" width="64" height="64"
                                         class="rounded-circle object-fit-cover border">
                                 </div>
                             @endif
@@ -147,7 +147,7 @@
                             <label class="form-label fw-semibold small">Cover Image</label>
                             @if ($restaurant->cover_image)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $restaurant->cover_image) }}"
+                                    <img src="{{ $restaurant->cover_image }}"
                                         class="rounded-3 w-100 object-fit-cover" style="height:80px">
                                 </div>
                             @endif
