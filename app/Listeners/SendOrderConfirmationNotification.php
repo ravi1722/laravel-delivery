@@ -26,6 +26,7 @@ class SendOrderConfirmationNotification
     public function handle(OrderPlaced $event): void
     {
         $order = $event->order->load(['user', 'restaurant', 'orderItems']);
+        dd($order, '111');
 
         Log::info('Order confirmation notification sent', [
             'order_id'    => $order->id,

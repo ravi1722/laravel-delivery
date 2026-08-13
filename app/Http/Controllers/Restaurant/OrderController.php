@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Restaurant;
 
 use App\Contracts\OrderServiceInterface;
+use App\Events\OrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -14,6 +15,9 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
+        $order = $this->orderService->getOrderByid(8);
+        OrderPlaced::dispatch($order);
+        dd(123);
         $restaurant = Auth::user()->restaurant;
 
         $orders = $this->orderService->getOrdersByRestaurant($restaurant->id, $request->all());

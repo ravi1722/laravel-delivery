@@ -22,6 +22,10 @@ class OrderService implements OrderServiceInterface
         private RestaurantServiceInterface $restaurantService
     ) {}
 
+    public function getOrderByid(int $orderId) : mixed {
+        return $this->orderRepository->getOrderByid($orderId);
+    }
+
     public function getOrdersByUser(int $userId): mixed
     {
         return $this->orderRepository->getOrdersByUser($userId);

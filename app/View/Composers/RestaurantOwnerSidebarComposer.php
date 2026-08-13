@@ -18,8 +18,12 @@ class RestaurantOwnerSidebarComposer
 
     public function compose(View $view)
     {
-        $order = Auth::user()->restaurant ? $this->orderRepository->getOrdersByRestaurant(Auth::user()->restaurant?->id) : 0;
-        $orderPendingCount = $order->whereIn('status', ['placed', 'confirmed'])->count();
+        $orderPendingCount = 0;
+        if (Auth::user()->restaurant) {
+            $order = $this->orderRepository->getOrdersByRestaurant(Auth::user()->restaurant?->id);
+            $orderPendingCount = $order->whereIn('status', ['placed', 'confirmed'])->count();
+        }
+
         $view->with("orderPendingCount", $orderPendingCount);
     }
 }

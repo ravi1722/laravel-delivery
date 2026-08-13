@@ -106,7 +106,7 @@
             <div class="table-card">
                 <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                     <h6 class="fw-semibold mb-0">Recent Orders</h6>
-                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="{{ route('restaurant.orders.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
