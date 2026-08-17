@@ -52,7 +52,7 @@
                 @forelse($categories as $category)
                     <div class="p-3 border-bottom d-flex align-items-center gap-3">
                         @if ($category->image)
-                            <img src="{{ asset('storage/' . $category->image) }}" width="50" height="50"
+                            <img src="{{ $category->image }}" width="50" height="50"
                                 class="rounded-3 object-fit-cover">
                         @else
                             <div class="rounded-3 d-flex align-items-center justify-content-center"
