@@ -26,6 +26,15 @@ return [
         'preparing' => ['ready' => 'Ready'],
         'ready'     => ['picked_up' => 'Picked Up'],
         'picked_up' => ['delivered' => 'Delivered'],
+    ],
+
+    'notify_icons' => [
+        'confirmed' => 'bi-check-circle',
+        'preparing' => 'bi-fire',
+        'ready'     => 'bi-box-seam',
+        'picked_up' => 'bi-truck',
+        'delivered' => 'bi-house-check',
+        'cancelled' => 'bi-x-circle',
     ]
 
 ];

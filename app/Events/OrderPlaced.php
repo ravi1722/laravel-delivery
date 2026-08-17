@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderPlaced implements ShouldBroadcast
+class OrderPlaced
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
