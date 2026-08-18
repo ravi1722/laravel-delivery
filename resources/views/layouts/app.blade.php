@@ -367,8 +367,92 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script>
-        // ── Laravel Echo Setup ──────────────────────────────────────────
-        // window.Echo = new Echo({});
+        // Load on page load
+        loadNotifications();
+
+        // Refresh every 30 seconds
+        setInterval(loadNotifications, 30000);
+
+        // console.log(typeof Echo);
+
+
+        // window.Echo.private('orders.{{ auth()->id() }}')
+        //     .listen('.order.status.updated', function(data) {
+        //         // Show toast notification
+        //         showOrderToast(data.message, data.status);
+
+        //         // Refresh notification bell
+        //         loadNotifications();
+
+        //         // If on order detail page — reload status
+        //         // if (window.location.href.includes('/orders/')) {
+        //         //     setTimeout(() => location.reload(), 2000);
+        //         // }
+        //     });
+
+        function loadNotifications() {
+            $.get('{{ route('notifications.unread') }}', function(data) {
+                const count = data.count;
+                const badge = $('#notificationCount');
+
+                if (count > 0) {
+                    badge.text(count > 99 ? '99+' : count).show();
+                } else {
+                    badge.hide();
+                }
+
+                // Build notification list
+                let html = '';
+                if (data.notifications.length === 0) {
+                    html = `<div class="p-3 text-center text-muted small">
+                        <i class="bi bi-bell-slash d-block mb-1 fs-4 opacity-25"></i>
+                        No new notifications
+                    </div>`;
+                } else {
+                    data.notifications.forEach(n => {
+                        html += `
+                        <div class="p-3 border-bottom notification-item"
+                            style="cursor:pointer"
+                            onclick="readAndGo('${n.id}', '${n.url}')">
+                            <div class="d-flex gap-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width:32px;height:32px;
+                                            background:rgba(255,107,53,.1);
+                                            color:#FF6B35">
+                                    <i class="bi ${n.icon}" style="font-size:14px"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:12px">${n.title}</div>
+                                    <div class="text-muted" style="font-size:11px">${n.message}</div>
+                                    <div class="text-muted" style="font-size:10px">${n.time}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+                $('#notificationList').html(html);
+            });
+        }
+
+        // Mark notification as read and redirect
+        function readAndGo(id, url) {
+            $.post(`/notifications/${id}/read`, {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            }, function() {
+                loadNotifications();
+                // if (url && url !== '#') window.location.href = url;
+            });
+        }
+
+        // Mark all as read
+        $('#markAllRead').on('click', function() {
+            $.post('{{ route('notifications.read-all') }}', {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            }, function() {
+                loadNotifications();
+            });
+        });
+
         // Sidebar toggle (mobile)
         $('#sidebarToggle').click(function() {
             $('#sidebar').toggleClass('open');

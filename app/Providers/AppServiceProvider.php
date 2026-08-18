@@ -16,8 +16,11 @@ use App\Services\OrderService;
 use App\Services\RestaurantService;
 use App\View\Composers\CustomerSidebarComposer;
 use App\View\Composers\RestaurantOwnerSidebarComposer;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Horizon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +41,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Horizon authentication
+        Horizon::auth(function ($request) {
+            // Local — allow all for easy development
+            if (app()->environment('local')) {
+                return true;
+            }
+
+            // Production — admin only
+            return $request->user()?->isAdmin() ?? false;
+        });
         Restaurant::observe(RestaurantObserver::class);
         View::composer("partials.sidebar-customer", CustomerSidebarComposer::class);    //partials.sidebar-customer load ஆகும் போதெல்லாம் service automatically call ஆகும்
         View::composer("partials.sidebar-restaurant_owner", RestaurantOwnerSidebarComposer::class);

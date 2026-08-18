@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +18,7 @@ class OrderAssignedToAgent
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public readonly Order $order)
     {
         //
     }
@@ -30,7 +31,24 @@ class OrderAssignedToAgent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('agent.' . $this->order->delivery_agent_id),
         ];
     }
+
+    // public function broadcastWith(): array
+    // {
+    //     return [
+    //         'order_id'           => $this->order->id,
+    //         'order_number'       => $this->order->order_number,
+    //         'restaurant_name'    => $this->order->restaurant->name,
+    //         'restaurant_address' => $this->order->restaurant->address,
+    //         'delivery_address'   => $this->order->address->address_line1 . ', ' . $this->order->address->city,
+    //         'total_amount'       => $this->order->total_amount,
+    //     ];
+    // }
+
+    // public function broadcastAs(): string
+    // {
+    //     return 'order.assigned';
+    // }
 }
