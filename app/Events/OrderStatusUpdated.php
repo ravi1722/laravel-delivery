@@ -31,4 +31,33 @@ class OrderStatusUpdated implements ShouldBroadcast
             new PrivateChannel('orders' . $this->order->user_id),
         ];
     }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'order_id'     => $this->order->id,
+            'order_number' => $this->order->order_number,
+            'status'       => $this->order->status,
+            'status_label' => ucfirst(str_replace('_', ' ', $this->order->status)),
+            'message'      => $this->getStatusMessage(),
+            'updated_at'   => $this->order->updated_at->toIso8601String(),
+        ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'order.status.updated';
+    }
+    private function getStatusMessage(): string
+    {
+        return match ($this->order->status) {
+            'confirmed' => "Your order #{$this->order->order_number} has been confirmed!",
+            'preparing' => "Restaurant is preparing your order.",
+            'ready'     => "Your order is ready for pickup!",
+            'picked_up' => "Your order is on the way!",
+            'delivered' => "Your order has been delivered. Enjoy your meal! 🎉",
+            'cancelled' => "Your order #{$this->order->order_number} has been cancelled.",
+            default     => "Order status updated.",
+        };
+    }
 }

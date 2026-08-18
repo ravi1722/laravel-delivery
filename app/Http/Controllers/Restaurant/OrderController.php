@@ -15,9 +15,10 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $order = $this->orderService->getOrderByid(8);
-        OrderPlaced::dispatch($order);
-        dd(123);
+        // $order = $this->orderService->getOrderByid(8);
+        // dd($order);
+        // OrderPlaced::dispatch($order);
+        // dd(123);
         $restaurant = Auth::user()->restaurant;
 
         $orders = $this->orderService->getOrdersByRestaurant($restaurant->id, $request->all());

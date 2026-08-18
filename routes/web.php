@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Restaurant\OrderController as RestaurantOrderController;
 use App\Http\Controllers\Restaurant\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -125,15 +126,11 @@ Route::middleware(['auth', 'role:delivery_agent'])->prefix('agent')->name('agent
 
 // Notifications
 Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])->name('index');
-    // Route::get('/unread', [\App\Http\Controllers\NotificationController::class, 'unread'])
-    //     ->name('unread');
-    // Route::post('/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
-    //     ->name('read');
-    // Route::post('/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
-    //     ->name('read-all');
-    // Route::delete('/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])
-    //     ->name('destroy');
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/unread', [NotificationController::class, 'unread'])->name('unread');
+    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+    Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
 });
 
 // pending: Admin/RestaurantController, resources/views/admin/restaurants/index.blade.php, 

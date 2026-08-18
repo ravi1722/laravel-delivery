@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\NewOrderReceived;
 use App\Events\OrderPlaced;
 use App\Events\OrderStatusUpdated;
 use App\Notifications\NewOrderNotification;
@@ -29,13 +30,16 @@ class SendOrderConfirmationNotification
     public function handle(OrderPlaced $event): void
     {
         $order = $event->order->load(['user', 'restaurant', 'orderItems']);
-        // // 1. Notify customer via mail + database
-        // $order->user->notify(new OrderPlacedNotification($order));
-        // // 2. Notify restaurant owner via mail + database
-        // $order->restaurant->owner->notify(new NewOrderNotification($order));
+        // 1. Notify customer via mail + database
+        $order->user->notify(new OrderPlacedNotification($order));
+        // 2. Notify restaurant owner via mail + database
+        $order->restaurant->owner->notify(new NewOrderNotification($order));
 
         // 3. Broadcast to customer's private channel — real-time
-        OrderStatusUpdated::dispatch($order);
+        // OrderStatusUpdated::dispatch($order);
+
+        // 4. Broadcast to restaurant's private channel — real-time
+        // NewOrderReceived::dispatch($order);
 
         Log::info("Order notifications sent", [
             'order_id' => $order->id,

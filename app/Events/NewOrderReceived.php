@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +18,7 @@ class NewOrderReceived
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public readonly Order $order)
     {
         //
     }
@@ -30,7 +31,25 @@ class NewOrderReceived
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('restaurant.' . $this->order->restaurant_id),
         ];
     }
+
+    // public function broadcastWith(): array
+    // {
+    //     return [
+    //         'order_id'      => $this->order->id,
+    //         'order_number'  => $this->order->order_number,
+    //         'total_amount'  => $this->order->total_amount,
+    //         'items_count'   => $this->order->items()->count(),
+    //         'payment_method' => $this->order->payment_method,
+    //         'customer_name' => $this->order->user->name,
+    //         'placed_at'     => $this->order->created_at->format('h:i A'),
+    //     ];
+    // }
+
+    // public function broadcastAs(): string
+    // {
+    //     return 'new.order.received';
+    // }
 }
