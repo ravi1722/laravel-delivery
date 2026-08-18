@@ -66,5 +66,8 @@ return new class extends Migration
         $schema->dropIfExists('telescope_entries_tags');
         $schema->dropIfExists('telescope_entries');
         $schema->dropIfExists('telescope_monitoring');
+        // Schema::dropIfExists('telescope_entries_tags');
+        // Schema::dropIfExists('telescope_monitoring');
+        // Schema::dropIfExists('telescope_entries');
     }
 };
