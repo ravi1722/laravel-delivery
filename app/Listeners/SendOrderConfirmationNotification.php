@@ -31,15 +31,15 @@ class SendOrderConfirmationNotification
     {
         $order = $event->order->load(['user', 'restaurant', 'orderItems']);
         // 1. Notify customer via mail + database
-        $order->user->notify(new OrderPlacedNotification($order));
+        // $order->user->notify(new OrderPlacedNotification($order));
         // 2. Notify restaurant owner via mail + database
-        $order->restaurant->owner->notify(new NewOrderNotification($order));
+        // $order->restaurant->owner->notify(new NewOrderNotification($order));
 
         // 3. Broadcast to customer's private channel — real-time
         // OrderStatusUpdated::dispatch($order);
 
         // 4. Broadcast to restaurant's private channel — real-time
-        // NewOrderReceived::dispatch($order);
+        NewOrderReceived::dispatch($order);
 
         Log::info("Order notifications sent", [
             'order_id' => $order->id,

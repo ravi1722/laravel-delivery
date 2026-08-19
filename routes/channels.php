@@ -13,9 +13,9 @@ Broadcast::channel('orders.{userId}', function($user, $userId) {
 });
 
 // Restaurant channel — only the restaurant owner can listen
-// Broadcast::channel('restaurant.{restaurantId}', function ($user, $restaurantId) {
-//     return $user->restaurant?->id === (int) $restaurantId;
-// });
+Broadcast::channel('restaurant.{restaurantId}', function ($user, $restaurantId) {
+    return $user->restaurant?->id === (int) $restaurantId;
+});
 
 // Delivery agent channel — only that specific agent
 // Broadcast::channel('agent.{agentId}', function ($user, $agentId) {
