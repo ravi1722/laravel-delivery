@@ -60,21 +60,6 @@
                         This page updates automatically when your order status changes.
                     </div>
                 </div>
-
-                @push('scripts')
-                    <script>
-                        // window.Echo.private('orders.{{ auth()->id() }}')
-                        //     .listen('.order.status.updated', function(data) {
-                        //         if (data.order_id === {{ $order->id }}) {
-                        //             // Show update toast
-                        //             showOrderToast(data.message, data.status);
-
-                        //             // Reload page after 2 seconds to show new status
-                        //             setTimeout(() => location.reload(), 2000);
-                        //         }
-                        //     });
-                    </script>
-                @endpush
             @endif
             {{-- Order Items --}}
             <div class="table-card p-4 mb-4">
@@ -220,3 +205,22 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        @if (!in_array($order->status, ['delivered', 'cancelled']))
+            document.addEventListener('DOMContentLoaded', function() { //must need bcas app.js we have main variable
+                window.Echo.private('orders.{{ auth()->id() }}')
+                    .listen('.order.status.updated', function(data) {
+                        if (data.order_id === {{ $order->id }}) {
+                            // Show update toast
+                            showOrderToast(data.message, data.status);
+
+                            // Reload page after 2 seconds to show new status
+                            setTimeout(() => location.reload(), 2000);
+                        }
+                    });
+            });
+        @endif
+    </script>
+@endpush

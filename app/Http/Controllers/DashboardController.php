@@ -13,10 +13,6 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $order = $this->orderService->getOrderByid(7);
-        // dd($order);
-        OrderPlaced::dispatch($order);
-        dd(123);
 
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),

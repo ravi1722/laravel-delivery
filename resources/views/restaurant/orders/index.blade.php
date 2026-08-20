@@ -160,29 +160,17 @@
                 });
         });
 
-        function showToast(message, type) {
-            const toast = `<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
-                <div class="toast show align-items-center text-white bg-${type} border-0">
-                    <div class="d-flex">
-                        <div class="toast-body small">${message}</div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                                onclick="this.closest('.position-fixed').remove()"></button>
-                    </div>
-                </div>
-            </div>`;
-            $('body').append(toast);
-            setTimeout(() => $('.position-fixed').last().remove(), 3000);
-        }
-
         // Real-time new order notification for restaurant
-        // @if (auth()->user()->restaurant)
-        //     window.Echo.private('restaurant.{{ auth()->user()->restaurant->id }}')
-        //         .listen('.new.order.received', function(data) {
-        //             playNotificationSound();
-        //             showToast(`New Order #${data.order_number} received!`, 'warning');
-        //             // Reload table after 3 seconds
-        //             setTimeout(() => location.reload(), 3000);
-        //         });
-        // @endif
+        @if (auth()->user()->restaurant)
+            document.addEventListener('DOMContentLoaded', function() { //must need bcas app.js we have main variable
+                window.Echo.private('restaurant.{{ auth()->user()->restaurant->id }}')
+                    .listen('.new.order.received', function(data) {
+                        playNotificationSound();
+                        // Reload table after 3 seconds
+                        setTimeout(() => location.reload(), 3000);
+                    });
+            });
+        @endif
     </script>
+
 @endpush

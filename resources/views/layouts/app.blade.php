@@ -370,23 +370,6 @@
         // Load on page load
         loadNotifications();
 
-        // console.log(typeof Echo);
-
-
-        // window.Echo.private('orders.{{ auth()->id() }}')
-        //     .listen('.order.status.updated', function(data) {
-        //         // Show toast notification
-        //         showOrderToast(data.message, data.status);
-
-        //         // Refresh notification bell
-        //         loadNotifications();
-
-        //         // If on order detail page — reload status
-        //         // if (window.location.href.includes('/orders/')) {
-        //         //     setTimeout(() => location.reload(), 2000);
-        //         // }
-        //     });
-
         function loadNotifications() {
             $.get('{{ route('notifications.unread') }}', function(data) {
                 const count = data.count;
@@ -544,6 +527,21 @@
                         loadNotifications();
                     });
             @endif
+
+
+            window.Echo.private('orders.{{ auth()->id() }}')
+                .listen('.order.status.updated', function(data) {
+                    // Show toast notification
+                    showOrderToast(data.message, data.status);
+
+                    // Refresh notification bell
+                    loadNotifications();
+
+                    // If on order detail page — reload status
+                    if (window.location.href.includes('/orders/')) {
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                });
         });
     </script>
 
