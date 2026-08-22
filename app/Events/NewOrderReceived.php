@@ -8,10 +8,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewOrderReceived
+class NewOrderReceived implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -35,21 +36,21 @@ class NewOrderReceived
         ];
     }
 
-    // public function broadcastWith(): array
-    // {
-    //     return [
-    //         'order_id'      => $this->order->id,
-    //         'order_number'  => $this->order->order_number,
-    //         'total_amount'  => $this->order->total_amount,
-    //         'items_count'   => $this->order->items()->count(),
-    //         'payment_method' => $this->order->payment_method,
-    //         'customer_name' => $this->order->user->name,
-    //         'placed_at'     => $this->order->created_at->format('h:i A'),
-    //     ];
-    // }
+    public function broadcastWith(): array
+    {
+        return [
+            'order_id'      => $this->order->id,
+            'order_number'  => $this->order->order_number,
+            'total_amount'  => $this->order->total_amount,
+            'items_count'   => $this->order->orderItems()->count(),
+            'payment_method' => $this->order->payment_method,
+            'customer_name' => $this->order->user->name,
+            'placed_at'     => $this->order->created_at->format('h:i A'),
+        ];
+    }
 
-    // public function broadcastAs(): string
-    // {
-    //     return 'new.order.received';
-    // }
+    public function broadcastAs(): string
+    {
+        return 'new.order.received';
+    }
 }

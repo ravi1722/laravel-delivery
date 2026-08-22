@@ -16,8 +16,11 @@ use App\Services\OrderService;
 use App\Services\RestaurantService;
 use App\View\Composers\CustomerSidebarComposer;
 use App\View\Composers\RestaurantOwnerSidebarComposer;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
@@ -54,5 +57,39 @@ class AppServiceProvider extends ServiceProvider
         Restaurant::observe(RestaurantObserver::class);
         View::composer("partials.sidebar-customer", CustomerSidebarComposer::class);    //partials.sidebar-customer load ஆகும் போதெல்லாம் service automatically call ஆகும்
         View::composer("partials.sidebar-restaurant_owner", RestaurantOwnerSidebarComposer::class);
+
+        // ── API Rate Limiters ──────────────────────────
+        // Guest — very limited
+        RateLimiter::for('api.guest', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
+        });
+
+        // Authenticated customer — standard
+        RateLimiter::for('api.customer', function (Request $request) {
+            return Limit::perMinute(120)->by($request->user()?->id ?? $request->ip());
+        });
+
+        // Restaurant owner — higher limit
+        RateLimiter::for('api.restaurant', function (Request $request) {
+            return Limit::perMinute(300)->by($request->user()?->id ?? $request->ip());
+        });
+
+        // Admin — unlimited practically
+        RateLimiter::for('api.admin', function (Request $request) {
+            return Limit::perMinute(1000)->by($request->user()?->id ?? $request->ip());
+        });
+
+        // Dynamic limiter based on user role
+        RateLimiter::for('api', function (Request $request) {
+            if (!$request->user()) {
+                return Limit::perMinute(15)->by($request->ip());
+            }
+
+            return match ($request->user()->role) {
+                'admin'            => Limit::perMinute(1000)->by($request->user()->id),
+                'restaurant_owner' => Limit::perMinute(300)->by($request->user()->id),
+                default            => Limit::perMinute(120)->by($request->user()->id),
+            };
+        });
     }
 }

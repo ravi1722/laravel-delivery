@@ -35,6 +35,14 @@ return [
         'picked_up' => 'bi-truck',
         'delivered' => 'bi-house-check',
         'cancelled' => 'bi-x-circle',
-    ]
+    ],
 
+    'statusLabels' => [
+        'placed'    => ['label' => 'Order Placed',  'icon' => 'bi-bag-check'],
+        'confirmed' => ['label' => 'Confirmed',      'icon' => 'bi-check-circle'],
+        'preparing' => ['label' => 'Preparing',      'icon' => 'bi-fire'],
+        'ready'     => ['label' => 'Ready',          'icon' => 'bi-box-seam'],
+        'picked_up' => ['label' => 'Picked Up',      'icon' => 'bi-truck'],
+        'delivered' => ['label' => 'Delivered',      'icon' => 'bi-house-check'],
+    ]
 ];

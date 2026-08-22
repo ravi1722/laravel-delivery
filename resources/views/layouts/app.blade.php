@@ -370,26 +370,6 @@
         // Load on page load
         loadNotifications();
 
-        // Refresh every 30 seconds
-        setInterval(loadNotifications, 30000);
-
-        // console.log(typeof Echo);
-
-
-        // window.Echo.private('orders.{{ auth()->id() }}')
-        //     .listen('.order.status.updated', function(data) {
-        //         // Show toast notification
-        //         showOrderToast(data.message, data.status);
-
-        //         // Refresh notification bell
-        //         loadNotifications();
-
-        //         // If on order detail page — reload status
-        //         // if (window.location.href.includes('/orders/')) {
-        //         //     setTimeout(() => location.reload(), 2000);
-        //         // }
-        //     });
-
         function loadNotifications() {
             $.get('{{ route('notifications.unread') }}', function(data) {
                 const count = data.count;
@@ -510,6 +490,59 @@
             $('body').append(toast);
             setTimeout(() => $('.position-fixed').last().remove(), 5000);
         }
+
+        // ── Restaurant Owner: Listen for new orders ──────────────────────
+        document.addEventListener('DOMContentLoaded', function() { //must need bcas app.js we have main variable
+            @if (auth()->user()->isRestaurantOwner() && auth()->user()->restaurant)
+                // once you put below code channel.php validate every refresh
+                // name should be correct based on broadcastOn, broadcastAs in related event (. prev imprt for broadcastAs)
+                window.Echo.private('restaurant.{{ auth()->user()->restaurant->id }}')
+                    .listen('.new.order.received', function(data) {
+                        // Play notification sound
+                        playNotificationSound();
+
+                        // Show toast
+                        const toast = `
+                        <div class="position-fixed top-0 end-0 p-3" style="z-index:9999;margin-top:70px">
+                            <div class="toast show text-white border-0 shadow"
+                                style="background:#FF6B35">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <strong>🔔 New Order!</strong><br>
+                                        <small>
+                                            #${data.order_number} — ₹${data.total_amount}
+                                            from ${data.customer_name}
+                                        </small>
+                                    </div>
+                                    <button type="button"
+                                            class="btn-close btn-close-white me-2 m-auto"
+                                            onclick="this.closest('.position-fixed').remove()">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>`;
+                        $('body').append(toast);
+
+                        // Update notification bell
+                        loadNotifications();
+                    });
+            @endif
+
+
+            window.Echo.private('orders.{{ auth()->id() }}')
+                .listen('.order.status.updated', function(data) {
+                    // Show toast notification
+                    showOrderToast(data.message, data.status);
+
+                    // Refresh notification bell
+                    loadNotifications();
+
+                    // If on order detail page — reload status
+                    if (window.location.href.includes('/orders/')) {
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                });
+        });
     </script>
 
     @stack('scripts')
