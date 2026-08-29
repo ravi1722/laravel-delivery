@@ -41,7 +41,7 @@ class AuthController extends BaseApiController
         return $this->success([
             'user'  => new UserResource($user),
             'token' => $token,
-        ], 'Registration successful!', 200);
+        ], 'Registration successful!', 201);
     }
 
     public function login(Request $request)
@@ -73,7 +73,6 @@ class AuthController extends BaseApiController
     // POST /api/v1/auth/logout
     public function logout(Request $request)
     {
-        dd('check');
         $request->user()->currentAccessToken()->delete();
         return $this->success(null, 'Logged out successfully.');
     }

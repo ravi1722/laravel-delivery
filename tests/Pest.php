@@ -11,8 +11,13 @@
 |
 */
 
+use App\Models\MenuCategory;
+use App\Models\MenuItem;
+use App\Models\Restaurant;
+use App\Models\User;
+
 pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
 /*
@@ -44,4 +49,57 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+// Create admin user
+function createAdmin(): User
+{
+    $user = User::factory()->create([
+        'role'  => 'admin',
+        'email' => 'admin@test.com',
+    ]);
+    $user->assignRole('admin');
+    return $user;
+}
+
+// Create restaurant owner with restaurant
+function createRestaurantOwner(array $restaurantData = []): array
+{
+    $owner = User::factory()->create(['role' => 'restaurant_owner']);
+    $owner->assignRole('restaurant_owner');
+
+    $restaurant = Restaurant::factory()->create(array_merge([
+        'owner_id' => $owner->id,
+        'status'   => 'active',
+        'is_open'  => true,
+    ], $restaurantData));
+
+    return compact('owner', 'restaurant');
+}
+
+// Create customer
+function createCustomer(): User
+{
+    $user = User::factory()->create(['role' => 'customer']);
+    $user->assignRole('customer');
+
+    // Create wallet
+    \App\Models\Wallet::factory()->create(['user_id' => $user->id]);
+
+    return $user;
+}
+
+// Create menu item
+function createMenuItem(Restaurant $restaurant, array $data = []): MenuItem
+{
+    $category = MenuCategory::factory()->create([
+        'restaurant_id' => $restaurant->id,
+    ]);
+
+    return MenuItem::factory()->create(array_merge([
+        'restaurant_id' => $restaurant->id,
+        'category_id'   => $category->id,
+        'price'         => 150,
+        'is_available'  => true,
+    ], $data));
 }
