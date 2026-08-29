@@ -17,6 +17,7 @@ use App\Services\RestaurantService;
 use App\View\Composers\CustomerSidebarComposer;
 use App\View\Composers\RestaurantOwnerSidebarComposer;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -44,6 +45,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Prevent N+1 in development
+        Model::preventLazyLoading(!app()->isProduction()); //N+1 query problem-ஐ கண்டுபிடிக்க உதவும்
+        // Prevent silently discarding attributes
+        Model::preventSilentlyDiscardingAttributes(!app()->isProduction()); //இது Mass Assignment / Unknown Attributes தொடர்பான mistakes-ஐ கண்டுபிடிக்க உதவும்.
+        //app()->isProduction() - Production-ல் unexpected exception காரணமாக existing application flow பாதிக்கப்படக்கூடாது என்பதால்
+    
+
         // Horizon authentication
         Horizon::auth(function ($request) {
             // Local — allow all for easy development
