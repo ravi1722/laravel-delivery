@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\MenuServiceInterface;
+use App\Contracts\StorageServiceInterface;
 use App\Repositories\MenuRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -15,8 +16,10 @@ class MenuService implements MenuServiceInterface
     /**
      * Create a new class instance.
      */
-    public function __construct(private MenuRepository $menuRepository)
-    {
+    public function __construct(
+        private MenuRepository $menuRepository,
+        private StorageServiceInterface $storageService
+    ) {
         //
     }
 
@@ -100,7 +103,8 @@ class MenuService implements MenuServiceInterface
     public function createItem(array $data): mixed
     {
         if (!empty($data['image'])) {
-            $data['image'] = uploadImage($data['image'], 'menu/items');
+            // $data['image'] = uploadImage($data['image'], 'menu/items');
+            $data['image'] = $this->storageService->uploadMenuItem($data['image']);
         }
 
         $items = $this->menuRepository->createItem($data);
@@ -112,9 +116,11 @@ class MenuService implements MenuServiceInterface
         $item = $this->menuRepository->getMenuItem($id);
         if (!empty($data['image'])) {
             if ($item->image) {
-                Storage::disk('public')->delete($item->image);
+                // Storage::disk('public')->delete($item->image);
+                $this->storageService->delete($item->image);
             }
-            $data['image'] = uploadImage($data['image'], 'menu/items');
+            // $data['image'] = uploadImage($data['image'], 'menu/items');
+            $data['image'] = $this->storageService->uploadMenuItem($data['image']);
         }
         $item->update($data);
         // $this->clearMenuCache($item->restaurant_id);
@@ -126,7 +132,8 @@ class MenuService implements MenuServiceInterface
     {
         $item = $this->menuRepository->getMenuItem($id);
         if ($item->image) {
-            Storage::disk('public')->delete($item->image);
+            // Storage::disk('public')->delete($item->image);
+            $this->storageService->delete($item->image);
         }
         $restaurantId = $item->restaurant_id;
         $result = $item->delete();
@@ -150,11 +157,13 @@ class MenuService implements MenuServiceInterface
         return $this->menuRepository->getMenuItem($id);
     }
 
-    public function getItemVariantById(int $id): mixed {
+    public function getItemVariantById(int $id): mixed
+    {
         return $this->menuRepository->getItemVariant($id);
     }
 
-    public function getAddonsByIds(array $ids): mixed {
+    public function getAddonsByIds(array $ids): mixed
+    {
         return $this->menuRepository->getAddons($ids);
     }
 

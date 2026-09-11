@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\RestaurantServiceInterface;
+use App\Contracts\StorageServiceInterface;
 use App\Repositories\RestaurantRepository;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,7 +12,10 @@ class RestaurantService implements RestaurantServiceInterface
     /**
      * Create a new class instance.
      */
-    public function __construct(private RestaurantRepository $restaurantRepository) {}
+    public function __construct(
+        private RestaurantRepository $restaurantRepository,
+        private StorageServiceInterface $storageService
+    ) {}
 
     public function getAllRestaurants(array $filters = []): mixed
     {
@@ -26,11 +30,13 @@ class RestaurantService implements RestaurantServiceInterface
     public function createRestaurant(array $data): mixed
     {
         if (!empty($data['logo'])) {
-            $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+            // $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+            $data['logo'] = $this->storageService->uploadRestaurantLogo($data['logo']);
         }
 
         if (!empty($data['cover_image'])) {
-            $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+            // $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+            $data['cover_image'] = $this->storageService->uploadRestaurantCover($data['cover_image']);
         }
 
         $restaurant = $this->restaurantRepository->storeRestraurant($data);
@@ -45,17 +51,21 @@ class RestaurantService implements RestaurantServiceInterface
 
         if (!empty($data['logo'])) {
             if ($restaurant->logo) {
-                Storage::disk('public')->delete($restaurant->logo);
+                // Storage::disk('public')->delete($restaurant->logo);
+                $this->storageService->delete($restaurant->logo);
             }
-            $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+            // $data['logo'] = uploadImage($data['logo'], 'restaurants/logos');
+            $data['logo'] = $this->storageService->uploadRestaurantLogo($data['logo']);
         }
 
         if (!empty($data['cover_image'])) {
             if ($restaurant->cover_image) {
-                Storage::disk('public')->delete($restaurant->cover_image);
+                // Storage::disk('public')->delete($restaurant->cover_image);
+                $this->storageService->delete($restaurant->cover_image);
             }
 
-            $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+            // $data['cover_image'] = uploadImage($data['cover_image'], 'restaurants/cover-images');
+            $data['logo'] = $this->storageService->uploadRestaurantCover($data['logo']);
         }
 
         $restaurant->update($data);
@@ -69,11 +79,13 @@ class RestaurantService implements RestaurantServiceInterface
         $restaurant = $this->restaurantRepository->findById($id);
 
         if ($restaurant->logo) {
-            Storage::disk('public')->delete($restaurant->logo);
+            // Storage::disk('public')->delete($restaurant->logo);
+            $this->storageService->delete($restaurant->logo);
         }
 
         if ($restaurant->cover_image) {
-            Storage::disk('public')->delete($restaurant->cover_image);
+            // Storage::disk('public')->delete($restaurant->cover_image);
+            $this->storageService->delete($restaurant->cover_image);
         }
         $result = $restaurant->delete();
 
@@ -104,7 +116,8 @@ class RestaurantService implements RestaurantServiceInterface
         return $this->restaurantRepository->getFeatured();
     }
 
-    public function getRestaurantCities () : mixed {
+    public function getRestaurantCities(): mixed
+    {
         return $this->restaurantRepository->getRestaurantCities();
     }
 

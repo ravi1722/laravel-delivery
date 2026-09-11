@@ -7,6 +7,7 @@ use App\Contracts\CartServiceInterface;
 use App\Contracts\MenuServiceInterface;
 use App\Contracts\OrderServiceInterface;
 use App\Contracts\RestaurantServiceInterface;
+use App\Contracts\StorageServiceInterface;
 use App\Models\Restaurant;
 use App\Observers\RestaurantObserver;
 use App\Services\AddressService;
@@ -14,6 +15,7 @@ use App\Services\CartService;
 use App\Services\MenuService;
 use App\Services\OrderService;
 use App\Services\RestaurantService;
+use App\Services\StorageService;
 use App\View\Composers\CustomerSidebarComposer;
 use App\View\Composers\RestaurantOwnerSidebarComposer;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(StorageServiceInterface::class, StorageService::class);
         $this->app->bind(RestaurantServiceInterface::class, RestaurantService::class);
         $this->app->bind(MenuServiceInterface::class, MenuService::class);
         $this->app->bind(OrderServiceInterface::class, OrderService::class);

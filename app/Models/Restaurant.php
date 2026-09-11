@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\StorageServiceInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+use function Pest\Laravel\get;
 
 class Restaurant extends Model
 {
@@ -42,8 +46,8 @@ class Restaurant extends Model
 
     protected $casts = [
         'is_open' => 'boolean',
-        // 'is_featured' => 'boolean',
-        // 'rating' => 'decimal:2'
+        'is_featured' => 'boolean',
+        'rating' => 'decimal:2'
     ];
 
     public function owner(): BelongsTo
@@ -93,9 +97,32 @@ class Restaurant extends Model
     }
 
     // Accessors
-    public function getLogoAttribute(): string
+    // public function getLogoAttribute(): string
+    // {
+    //     return $this->attributes['logo'] ? asset('storage/' . $this->attributes['logo']) : asset('images/default-restaurant.png');
+    // }
+
+    protected function logo(): Attribute
+{
+    return Attribute::make(
+        get: function ($value) {
+
+            if (!$value) {
+                return asset('images/default-restaurant.png');
+            }
+
+            return app(StorageServiceInterface::class)->url($value);
+        }
+    );
+}
+
+    protected function coverImage(): Attribute
     {
-        return $this->attributes['logo'] ? asset('storage/' . $this->attributes['logo']) : asset('images/default-restaurant.png');
+        return Attribute::make(
+            get: function ($value) {
+                return $value ? app(StorageServiceInterface::class)->url($value) : null;
+            }
+        );
     }
 
     protected static function booted(): void
