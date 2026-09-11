@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -48,12 +49,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Token expiry configuration
+        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+
+        // Define scopes — what permissions tokens can have
+        Passport::tokensCan([
+            'read:restaurants'   => 'View restaurants and menus',
+            'place:orders'       => 'Place food orders',
+            'manage:restaurant'  => 'Manage restaurant and menu',
+            'view:orders'        => 'View order history',
+            'manage:profile'     => 'Update profile information',
+            'admin:all'          => 'Full admin access',
+        ]);
+
+        // Default scopes for new tokens
+        // Passport::setDefaultScope([
+        //     'read:restaurants',
+        //     'view:orders',
+        // ]);
+
         // Prevent N+1 in development
         Model::preventLazyLoading(!app()->isProduction()); //N+1 query problem-ஐ கண்டுபிடிக்க உதவும்
         // Prevent silently discarding attributes
         Model::preventSilentlyDiscardingAttributes(!app()->isProduction()); //இது Mass Assignment / Unknown Attributes தொடர்பான mistakes-ஐ கண்டுபிடிக்க உதவும்.
         //app()->isProduction() - Production-ல் unexpected exception காரணமாக existing application flow பாதிக்கப்படக்கூடாது என்பதால்
-    
+
 
         // Horizon authentication
         Horizon::auth(function ($request) {
