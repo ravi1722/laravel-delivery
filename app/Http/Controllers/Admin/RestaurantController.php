@@ -19,7 +19,6 @@ class RestaurantController extends Controller
     public function index()
     {
         $restaurants = $this->restaurantService->getAllRestaurants(request()->all());
-
         return view('admin.restaurants.index', compact('restaurants'));
     }
 
