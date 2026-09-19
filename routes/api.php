@@ -3,11 +3,18 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\PassportAuthController;
 use App\Http\Controllers\Api\V1\RestaurantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Passport
+Route::prefix('v1/passport')->name('passport.')->group(function () {
+     // Public
+    Route::post('register', [PassportAuthController::class, 'register'])->middleware('throttle:auth');
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();
