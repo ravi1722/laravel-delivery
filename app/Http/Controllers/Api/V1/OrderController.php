@@ -20,7 +20,7 @@ class OrderController extends BaseApiController
     // GET /api/v1/orders
     public function index(Request $request)
     {
-        $orders = $this->orderService->getOrdersByUser(Auth::user()->id);
+        $orders = $this->orderService->getOrdersByUser(Auth::id());
 
         return $this->paginated(
             OrderResource::collection($orders)->resource,
@@ -31,7 +31,7 @@ class OrderController extends BaseApiController
     // GET /api/v1/orders/{order}
     public function show(Order $order)
     {
-        if ($order->user_id !== Auth::user()->id) {
+        if ($order->user_id !== Auth::id()) {
             return $this->error('Unauthorized.', 403);
         }
 
@@ -75,7 +75,7 @@ class OrderController extends BaseApiController
     // POST /api/v1/orders/{order}/cancel
     public function cancel(Request $request, Order $order)
     {
-        if ($order->user_id !== Auth::user()->id) {
+        if ($order->user_id !== Auth::id()) {
             return $this->error('Unauthorized.', 403);
         }
 
@@ -95,7 +95,7 @@ class OrderController extends BaseApiController
     // GET /api/v1/orders/{order}/track
     public function track(Order $order)
     {
-        if ($order->user_id !== Auth::user()->id) {
+        if ($order->user_id !== Auth::id()) {
             return $this->error('Unauthorized.', 403);
         }
 

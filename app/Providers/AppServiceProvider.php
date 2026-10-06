@@ -6,6 +6,7 @@ use App\Contracts\AddressServiceInterface;
 use App\Contracts\CartServiceInterface;
 use App\Contracts\MenuServiceInterface;
 use App\Contracts\OrderServiceInterface;
+use App\Contracts\RazorpayServiceInterface;
 use App\Contracts\RestaurantServiceInterface;
 use App\Contracts\StorageServiceInterface;
 use App\Models\Restaurant;
@@ -14,6 +15,7 @@ use App\Services\AddressService;
 use App\Services\CartService;
 use App\Services\MenuService;
 use App\Services\OrderService;
+use App\Services\RazorpayService;
 use App\Services\RestaurantService;
 use App\Services\StorageService;
 use App\View\Composers\CustomerSidebarComposer;
@@ -42,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(AddressServiceInterface::class, AddressService::class);
         $this->app->bind(CartServiceInterface::class, CartService::class);
+        $this->app->singleton(RazorpayServiceInterface::class, RazorpayService::class);
     }
 
     /**
@@ -65,13 +68,13 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // Default scopes for new tokens
-        // Passport::setDefaultScope([
-        //     'read:restaurants',
-        //     'view:orders',
-        // ]);
+        Passport::defaultScopes([
+            'read:restaurants',
+            'view:orders',
+        ]);
 
         // Prevent N+1 in development
-        // Model::preventLazyLoading(!app()->isProduction()); //N+1 query problem-ஐ கண்டுபிடிக்க உதவும்
+        Model::preventLazyLoading(!app()->isProduction()); //N+1 query problem-ஐ கண்டுபிடிக்க உதவும்
         // Prevent silently discarding attributes
         Model::preventSilentlyDiscardingAttributes(!app()->isProduction()); //இது Mass Assignment / Unknown Attributes தொடர்பான mistakes-ஐ கண்டுபிடிக்க உதவும்.
         //app()->isProduction() - Production-ல் unexpected exception காரணமாக existing application flow பாதிக்கப்படக்கூடாது என்பதால்
@@ -91,6 +94,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer("partials.sidebar-customer", CustomerSidebarComposer::class);    //partials.sidebar-customer load ஆகும் போதெல்லாம் service automatically call ஆகும்
         View::composer("partials.sidebar-restaurant_owner", RestaurantOwnerSidebarComposer::class);
 
+        // ------------for auth----------
+        RateLimiter::for('auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
         // ── API Rate Limiters ──────────────────────────
         // Guest — very limited
         RateLimiter::for('api.guest', function (Request $request) {

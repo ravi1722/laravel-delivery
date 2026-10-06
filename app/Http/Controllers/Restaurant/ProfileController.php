@@ -24,7 +24,7 @@ class ProfileController extends Controller
     public function store(StoreRestaurantRequest $request)
     {
         $data = $request->validated();
-        $data['owner_id'] = Auth::user()->id;
+        $data['owner_id'] = Auth::id();
 
         $this->restaurant_service->createRestaurant($data);
 

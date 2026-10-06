@@ -12,8 +12,17 @@ use Illuminate\Support\Facades\Route;
 
 // Passport
 Route::prefix('v1/passport')->name('passport.')->group(function () {
-     // Public
+    // Public
     Route::post('register', [PassportAuthController::class, 'register'])->middleware('throttle:auth');
+
+    // orders
+    Route::prefix('orders')->middleware(['auth:api', 'scopes:place:orders'])->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+        Route::get('/{order}/track', [OrderController::class, 'track'])->name('track');
+    });
 });
 
 Route::get('/user', function (Request $request) {

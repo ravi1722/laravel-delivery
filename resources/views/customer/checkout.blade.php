@@ -70,7 +70,7 @@
                         <i class="bi bi-credit-card me-2" style="color:#FF6B35"></i>
                         Payment Method
                     </h6>
-                    <div class="row g-3">
+                    {{-- <div class="row g-3">
                         <div class="col-md-4">
                             <label class="w-100" style="cursor:pointer">
                                 <input type="radio" name="payment_method" value="cod" checked class="d-none">
@@ -95,6 +95,30 @@
                                 <div class="border rounded-3 p-3 text-center payment-option">
                                     <i class="bi bi-phone fs-3 d-block mb-2" style="color:#FF6B35"></i>
                                     <div class="small fw-semibold">Online Payment</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div> --}}
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="w-100" style="cursor:pointer">
+                                <input type="radio" name="payment_method" value="cod" checked class="d-none">
+                                <div class="border rounded-3 p-3 text-center payment-option active-payment">
+                                    <i class="bi bi-cash-coin fs-3 d-block mb-2" style="color:#28a745"></i>
+                                    <div class="small fw-semibold">Cash on Delivery</div>
+                                    <div class="text-muted" style="font-size:11px">Pay when delivered</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="w-100" style="cursor:pointer">
+                                <input type="radio" name="payment_method" value="online" class="d-none">
+                                <div class="border rounded-3 p-3 text-center payment-option">
+                                    <i class="bi bi-credit-card fs-3 d-block mb-2" style="color:#FF6B35"></i>
+                                    <div class="small fw-semibold">Pay Online</div>
+                                    <div class="text-muted" style="font-size:11px">
+                                        UPI, Card, Netbanking
+                                    </div>
                                 </div>
                             </label>
                         </div>
@@ -215,7 +239,7 @@
                 if (res.success) {
                     $('#couponMsg').html(
                         `<span class="text-success"><i class="bi bi-check-circle"></i> ${res.message}</span>`
-                        );
+                    );
                     $('#couponCode').val(code);
                     $('#discountRow').removeClass('d-none');
                     $('#discountAmt').text(`-₹${res.discount}`);
@@ -223,7 +247,7 @@
             }).fail(function(xhr) {
                 $('#couponMsg').html(
                     `<span class="text-danger"><i class="bi bi-x-circle"></i> ${xhr.responseJSON?.message}</span>`
-                    );
+                );
             });
         });
     </script>

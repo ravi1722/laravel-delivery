@@ -22,7 +22,7 @@ class OrderController extends Controller
     ) {}
     public function index()
     {
-        $get_orders = $this->orderService->getOrdersByUser(Auth::user()->id);
+        $get_orders = $this->orderService->getOrdersByUser(Auth::id());
         $orders = $get_orders->paginate(10);
         return view('customer.orders.index', compact('orders'));
     }
@@ -38,6 +38,12 @@ class OrderController extends Controller
 
         try {
             $order = $this->orderService->placeOrder($request->all());
+
+            // If online payment — redirect to payment page
+            if ($request->payment_method === 'online') {
+                return redirect()->route('payment.show', $order)
+                    ->with('info', 'Please complete your payment to confirm the order.');
+            }
             return redirect()->route('customer.orders.show', $order)
                 ->with('success', "Order #{$order->order_number} placed successfully!");
         } catch (\Exception $e) {
@@ -48,7 +54,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         // Ensure customer owns this order
-        if ($order->user_id !== Auth::user()->id) {
+        if ($order->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -81,7 +87,7 @@ class OrderController extends Controller
             return redirect()->route('customer.home');
         }
 
-        $addresses = $this->addressService->getUserAddresses(Auth::user()->id);
+        $addresses = $this->addressService->getUserAddresses(Auth::id());
         $restaurant = $this->restaurantService->getRestaurantById($cart['restaurant_id']);
         $subtotal = $this->cartService->getCartTotal();
         $taxAmount  = $subtotal * 0.05;
@@ -127,7 +133,7 @@ class OrderController extends Controller
     public function cancel(Request $request, Order $order)
     {
 
-        if ($order->user_id != Auth::user()->id) {
+        if ($order->user_id != Auth::id()) {
             abort(403);
         }
 

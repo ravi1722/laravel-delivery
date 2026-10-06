@@ -13,6 +13,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Restaurant\OrderController as RestaurantOrderController;
 use App\Http\Controllers\Restaurant\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +67,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    // ── Payment Routes ───────────────────────────────────────────
+    Route::get('/orders/{order}/pay', [PaymentController::class, 'show'])->name('payment.show');
+    Route::post('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+    Route::post('/payment/failure', [PaymentController::class, 'failure'])->name('payment.failure');
 });
 
 // -------------Admin--------------------

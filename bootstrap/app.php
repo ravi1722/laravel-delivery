@@ -10,6 +10,8 @@ use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
+use Laravel\Passport\Http\Middleware\CheckToken;
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,9 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             // Register Passport routes under /oauth prefix
-            // Route::middleware('api')->prefix('oauth')->group(function () {
-            //     \Laravel\Passport\Http\Controllers\AccessTokenController::class;
-            // });
+            Route::middleware('api')->prefix('oauth')->group(function () {
+                \Laravel\Passport\Http\Controllers\AccessTokenController::class;
+            });
 
             // \Laravel\Passport\Passport::routes();
         }
@@ -33,8 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'scope'   => \App\Http\Middleware\CheckScope::class,
-            // 'scopes'  => \Laravel\Passport\Http\Middleware\CheckScopes::class,
-            // 'check-scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+            'scopes'  => CheckToken::class,
+            'check-scope' => CheckTokenForAnyScope::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

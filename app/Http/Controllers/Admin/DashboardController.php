@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\RestaurantStatus;
 use App\Http\Controllers\Controller;
+use App\Jobs\TestJob;
 use App\Models\Order;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -14,7 +15,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-
+        // $order = Order::find();
+        // TestJob::dispatch(5)->delay(now()->addMinutes(2));
+        // dd(123);
         $stats = Cache::remember('admin.dashboard.stats', 300, function () {
             return [
                 'total_restaurants' => Restaurant::count(),
@@ -41,7 +44,8 @@ class DashboardController extends Controller
         //     'delivered' => 'success',
         //     'cancelled' => 'danger',
         // ];
+        $name = '<script>alert("hack")</script>';
 
-        return view('admin.dashboard', compact('stats', 'pendingRestaurant', 'recentOrders'));
+        return view('admin.dashboard', compact('stats', 'pendingRestaurant', 'recentOrders','name'));
     }
 }

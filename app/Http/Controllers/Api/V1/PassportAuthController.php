@@ -13,7 +13,6 @@ class PassportAuthController extends BaseApiController
 {
     public function register(Request $request)
     {
-        dd($request->all());
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
@@ -38,7 +37,7 @@ class PassportAuthController extends BaseApiController
 
         // Create personal access token with scopes based on role
         $scopes = $this->getScopesForRole($user->role);
-        $token  = $user->createToken('QuickBite-' . $user->role, $scopes);
+        $token  = $user->createToken('Laravel-Delivery-' . $user->role, $scopes);
 
         return $this->success([
             'user'          => new UserResource($user),

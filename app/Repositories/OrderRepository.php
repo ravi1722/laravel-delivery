@@ -63,7 +63,7 @@ class OrderRepository
         ) {
             $order = Order::create([
                 'order_number'      => $this->generateOrderNumber(),
-                'user_id'           => Auth::user()->id,
+                'user_id'           => Auth::id(),
                 'restaurant_id'     => $restaurant->id,
                 'address_id'        => $data['address_id'],
                 'coupon_id'         => $couponId,
@@ -97,7 +97,7 @@ class OrderRepository
             $order->statusHistories()->create([
                 'status'     => 'placed',
                 'note'       => 'Order placed by customer',
-                'changed_by' => Auth::user()->id,
+                'changed_by' => Auth::id(),
             ]);
 
             // Increment coupon usage

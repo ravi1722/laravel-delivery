@@ -60,7 +60,7 @@ class RestaurantObserver
             'action'       => $action,
             'old_values'   => !empty($oldValues) ? json_encode($oldValues) : null,
             'new_values'   => json_encode($restaurant->toArray()),
-            'performed_by' => Auth::check() ? Auth::user()->id : 1,
+            'performed_by' => Auth::check() ? Auth::id() : 1,
             'ip_address'   => request()->ip(),
         ]);
     }
