@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Contracts\RazorpayServiceInterface;
 use App\Models\Order;
 use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Razorpay\Api\Api;
+use Razorpay\Api\Errors\SignatureVerificationError;
 
 class RazorpayService implements RazorpayServiceInterface
 {
@@ -78,9 +80,108 @@ class RazorpayService implements RazorpayServiceInterface
         return 1;
     }
 
-    public function capturePayment(string $razorpayOrderId, string $razorpayPaymentId, string $razorpaySignature): Payment {}
+    public function capturePayment(
+        string $razorpayOrderId,
+        string $razorpayPaymentId,
+        string $razorpaySignature
+    ): Payment {
 
-    public function handlePaymentFailure(string $razorpayOrderId, string $razorpayPaymentId, string $errorCode, string $errorDescription): Payment {}
+        // Verify signature
+        if (!$this->verifyPayment($razorpayOrderId, $razorpayPaymentId, $razorpaySignature)) {
+            throw new \Exception('Payment verification failed. Possible fraud attempt.');
+        }
+
+        // Get full payment details from Razorpay
+        $payment = Payment::where('razorpay_order_id', $razorpayOrderId)->firstOrFail();
+
+        // Update payment in DB (wrapped in transaction)
+        $razorpayPayment = $this->api->payment->fetch($razorpayPaymentId);
+
+
+        // Update payment in DB (wrapped in transaction)
+        DB::transaction(function () use ($payment, $razorpayPayment, $razorpayPaymentId, $razorpaySignature) {
+            $payment->update([
+                'razorpay_payment_id' => $razorpayPaymentId,
+                'razorpay_signature'  => $razorpaySignature,
+                'status'              => 'paid',
+                'method'              => $razorpayPayment['method'],
+                'bank'                => $razorpayPayment['bank'] ?? null,
+                'wallet'              => $razorpayPayment['wallet'] ?? null,
+                'vpa'                 => $razorpayPayment['vpa'] ?? null,
+                'card_network'        => $razorpayPayment['card']['network'] ?? null,
+                'card_last4'          => $razorpayPayment['card']['last4'] ?? null,
+                'razorpay_response'   => $razorpayPayment->toArray(),
+                'paid_at'             => now(),
+            ]);
+
+            // Update order payment status
+            $payment->order->update([
+                'payment_status' => 'paid',
+                'status'         => 'confirmed', // auto-confirm on payment
+            ]);
+
+            // Log status history
+            $payment->order->statusHistories()->create([
+                'status' => 'confirmed',
+                'note'   => "Payment received via Razorpay ({$razorpayPayment['method']}). Payment ID: {$razorpayPaymentId}",
+            ]);
+        });
+
+        Log::info('Payment captured successfully', [
+            'order_id'            => $payment->order_id,
+            'razorpay_payment_id' => $razorpayPaymentId,
+            'amount'              => $payment->amount,
+            'method'              => $razorpayPayment['method'],
+        ]);
+
+        return $payment->fresh();
+    }
+
+    public function handlePaymentFailure(
+        string $razorpayOrderId,
+        string $razorpayPaymentId,
+        string $errorCode,
+        string $errorDescription
+    ): Payment {
+        $payment = Payment::where('razorpay_order_id', $razorpayOrderId)->firstOrFail();
+        $payment->update([
+            'razorpay_payment_id' => $razorpayPaymentId,
+            'status'              => 'failed',
+            'failure_reason'      => "[{$errorCode}] {$errorDescription}",
+        ]);
+
+        $payment->order->update(['payment_status' => 'failed']);
+        Log::warning('Payment failed', [
+            'order_id'   => $payment->order_id,
+            'error_code' => $errorCode,
+            'error'      => $errorDescription,
+        ]);
+        return $payment->fresh();
+    }
+
+    public function verifyPayment(
+        string $razorpayOrderId,
+        string $razorpayPaymentId,
+        string $razorpaySignature
+    ): bool {
+        try {
+            // Razorpay signature verification
+            // SHA256(razorpay_order_id + "|" + razorpay_payment_id, key_secret)
+            $this->api->utility->verifyPaymentSignature([
+                'razorpay_order_id'   => $razorpayOrderId,
+                'razorpay_payment_id' => $razorpayPaymentId,
+                'razorpay_signature'  => $razorpaySignature,
+            ]);
+            return true;
+        } catch (SignatureVerificationError $e) {
+            Log::warning('Razorpay signature verification failed', [
+                'razorpay_order_id'   => $razorpayOrderId,
+                'razorpay_payment_id' => $razorpayPaymentId,
+                'error'               => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
 
     public function getKeyId(): string
     {

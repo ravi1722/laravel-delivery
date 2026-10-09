@@ -61,8 +61,12 @@ class PaymentController extends Controller
                 $request->razorpay_signature
             );
 
-            
+            // Fire order placed notifications
+            event(new \App\Events\OrderPlaced($payment->order));
 
+            return redirect()
+                ->route('customer.orders.show', $payment->order)
+                ->with('success', "Payment successful! Order #{$payment->order->order_number} confirmed. 🎉");
         } catch (\Exception $e) {
             return redirect()
                 ->back()
@@ -70,5 +74,33 @@ class PaymentController extends Controller
         }
     }
 
-    public function failure() {}
+    public function failure(Request $request)
+    {
+        $request->validate([
+            'razorpay_order_id'        => 'required|string',
+            'razorpay_payment_id'      => 'required|string',
+            'error_code'               => 'required|string',
+            'error_description'        => 'required|string',
+        ]);
+
+        $payment = $this->razorpayService->handlePaymentFailure(
+            $request->razorpay_order_id,
+            $request->razorpay_payment_id,
+            $request->error_code,
+            $request->error_description
+        );
+
+        return redirect()
+            ->route('payment.show', $payment->order)
+            ->with('error', 'Payment failed: ' . $request->error_description . ' Please try again.');
+    }
+
+    public function status(Payment $payment)
+    {
+        if ($payment->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('customer.payment-status', compact('payment'));
+    }
 }

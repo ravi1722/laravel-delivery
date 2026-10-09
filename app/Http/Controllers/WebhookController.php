@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 class WebhookController extends Controller
 {
-    //
+    public function handleRazorpay(Request $request) {}
 }
