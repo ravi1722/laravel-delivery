@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Restaurant\DashboardController as RestaurantDashboardController;
 use App\Http\Controllers\Restaurant\MenuCategoryController as RestaurantMenuCategoryController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Restaurant\OrderController as RestaurantOrderController;
 use App\Http\Controllers\Restaurant\ProfileController;
+use App\Http\Controllers\WebhookController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -72,7 +75,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}/pay', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::post('/payment/failure', [PaymentController::class, 'failure'])->name('payment.failure');
+    Route::get('/payment/{payment}/status', [PaymentController::class, 'status'])->name('payment.status');
+    Route::get('/transactions', [PaymentController::class, 'transactions'])->name('customer.transactions');
 });
+
+// ── Webhook — No auth, no CSRF ─────────────────────────────────
+Route::post('/api/webhooks/razorpay', [WebhookController::class, 'handleRazorpay'])
+    ->name('webhooks.razorpay')->withoutMiddleware([VerifyCsrfToken::class]);
 
 // -------------Admin--------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -84,6 +93,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         ->name('restaurants.approve');
     Route::post('restaurants/{restaurant}/toggle-status', [AdminRestaurantController::class, 'toggleStatus'])
         ->name('restaurants.toggle-status');
+
+    Route::get('refunds', [RefundController::class, 'index'])->name('refunds.index');
+    Route::get('orders/{order}/refund', [RefundController::class, 'create'])->name('refunds.create');
+    Route::post('orders/{order}/refund', [RefundController::class, 'store'])->name('refunds.store');
+    Route::get('refunds/{refund}', [RefundController::class, 'show'])->name('refunds.show');
 });
 
 // --------------restaurant owner---------------

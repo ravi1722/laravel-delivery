@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Refund extends Model
 {
@@ -21,4 +22,16 @@ class Refund extends Model
         'razorpay_response',
         'processed_at',
     ];
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
+    }
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+    public function initiatedBy()
+    {
+        return $this->belongsTo(User::class, 'initiated_by');
+    }
 }
