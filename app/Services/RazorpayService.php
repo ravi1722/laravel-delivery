@@ -78,6 +78,10 @@ class RazorpayService implements RazorpayServiceInterface
         return 1;
     }
 
+    public function capturePayment(string $razorpayOrderId, string $razorpayPaymentId, string $razorpaySignature): Payment {}
+
+    public function handlePaymentFailure(string $razorpayOrderId, string $razorpayPaymentId, string $errorCode, string $errorDescription): Payment {}
+
     public function getKeyId(): string
     {
         return config('razorpay.key_id');

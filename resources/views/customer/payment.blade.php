@@ -117,3 +117,87 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    {{-- Razorpay Checkout JS --}}
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        document.getElementById('payNowBtn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Opening Payment...';
+
+            var options = {
+                // Razorpay credentials
+                key: '{{ $razorpayKey }}',
+
+                // Order details
+                amount: {{ (int) ($order->total_amount * 100) }}, // in paise
+                currency: 'INR',
+                order_id: '{{ $payment->razorpay_order_id }}',
+                name: 'Laravel-Delivery',
+                description: 'Order #{{ $order->order_number }}',
+                image: '{{ asset('images/default-avatar.png') }}',
+
+                // Pre-fill customer info
+                prefill: {
+                    name: '{{ auth()->user()->name }}',
+                    email: '{{ auth()->user()->email }}',
+                    contact: '{{ auth()->user()->phone }}',
+                },
+
+                // Razorpay theme
+                theme: {
+                    color: '#FF6B35',
+                },
+
+                // Payment notes
+                notes: {
+                    order_number: '{{ $order->order_number }}',
+                    restaurant: '{{ $order->restaurant->name }}',
+                },
+
+                // ── Success Handler ─────────────────────────────────
+                handler: function(response) {
+                    // Payment successful — submit hidden form to verify server-side
+                    document.getElementById('rzp_order_id').value = response.razorpay_order_id;
+                    document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('rzp_signature').value = response.razorpay_signature;
+
+                    // Show processing message
+                    btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-2"></span>Verifying payment...';
+                    document.getElementById('successForm').submit();
+                },
+
+                // ── Modal Close (payment not completed) ─────────────
+                modal: {
+                    ondismiss: function() {
+                        btn.disabled = false;
+                        btn.innerHTML =
+                            '<i class="bi bi-lock me-2"></i>Pay ₹{{ number_format($order->total_amount, 0) }} Securely';
+                    },
+                }
+            };
+
+            var rzp = new Razorpay(options);
+
+            // ── Failure Handler ──────────────────────────────────────
+            rzp.on('payment.failed', function(response) {
+                document.getElementById('fail_order_id').value = response.error.metadata.order_id;
+                document.getElementById('fail_payment_id').value = response.error.metadata.payment_id;
+                document.getElementById('fail_code').value = response.error.code;
+                document.getElementById('fail_description').value = response.error.description;
+
+                btn.innerHTML =
+                    '<i class="bi bi-lock me-2"></i>Pay ₹{{ number_format($order->total_amount, 0) }} Securely';
+                btn.disabled = false;
+
+                document.getElementById('failureForm').submit();
+            });
+
+            rzp.open();
+        });
+    </script>
+@endpush

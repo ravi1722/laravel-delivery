@@ -32,7 +32,7 @@ class PaymentController extends Controller
         // $existingPayment = null;
         if ($existingPayment) {
             // Reuse existing Razorpay order
-            $payment = $existingPayment->amount;
+            $payment = $existingPayment;
         } else {
             $payment = $this->razorpayService->createOrder($order);
         }
@@ -45,4 +45,30 @@ class PaymentController extends Controller
             'razorpayKey' => $this->razorpayService->getKeyId(),
         ]);
     }
+
+    public function success(Request $request)
+    {
+        $request->validate([
+            'razorpay_order_id'   => 'required|string',
+            'razorpay_payment_id' => 'required|string',
+            'razorpay_signature'  => 'required|string',
+        ]);
+
+        try {
+            $payment = $this->razorpayService->capturePayment(
+                $request->razorpay_order_id,
+                $request->razorpay_payment_id,
+                $request->razorpay_signature
+            );
+
+            
+
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Payment verification failed: ' . $e->getMessage());
+        }
+    }
+
+    public function failure() {}
 }
