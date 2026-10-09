@@ -12,7 +12,7 @@ class AddressController extends Controller
     public function __construct(private AddressServiceInterface $addressService) {}
     public function index()
     {
-        $addresses = $this->addressService->getUserAddresses(Auth::user()->id);
+        $addresses = $this->addressService->getUserAddresses(Auth::id());
         return view('customer.addresses', compact('addresses'));
     }
 
@@ -28,7 +28,7 @@ class AddressController extends Controller
             'is_default'    => 'nullable|boolean',
         ]);
 
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
         $this->addressService->createAddress($validated);
 
         return back()->with('success', 'Address added successfully!');

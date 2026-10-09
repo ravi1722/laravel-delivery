@@ -45,7 +45,7 @@ class OrderService implements OrderServiceInterface
             );
         }
         // Check per-user usage
-        $userUsage = $coupon->usages()->where('user_id', Auth::user()->id)->count();
+        $userUsage = $coupon->usages()->where('user_id', Auth::id())->count();
         if ($userUsage >= $coupon->per_user_limit) {
             throw new \Exception('You have already used this coupon.');
         }

@@ -15,7 +15,7 @@ class CartService implements CartServiceInterface
      */
     public function __construct(private MenuServiceInterface $menuService)
     {
-        $this->cartKey = (Auth::check()) ?  "cart_" . Auth::user()->id : 'cart_guest_' . session()->getId();
+        $this->cartKey = (Auth::check()) ?  "cart_" . Auth::id() : 'cart_guest_' . session()->getId();
     }
 
     public function getCart(): array

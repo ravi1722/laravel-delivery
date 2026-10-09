@@ -3,11 +3,27 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\OrderController;
+use App\Http\Controllers\Api\V1\PassportAuthController;
 use App\Http\Controllers\Api\V1\RestaurantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Passport
+Route::prefix('v1/passport')->name('passport.')->group(function () {
+    // Public
+    Route::post('register', [PassportAuthController::class, 'register'])->middleware('throttle:auth');
+
+    // orders
+    Route::prefix('orders')->middleware(['auth:api', 'scopes:place:orders'])->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+        Route::get('/{order}/track', [OrderController::class, 'track'])->name('track');
+    });
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();

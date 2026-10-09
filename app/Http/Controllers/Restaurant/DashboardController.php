@@ -17,7 +17,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $restaurant = $this->restaurantService->getRestaurantByOwner(Auth::user()->id);
+        $restaurant = $this->restaurantService->getRestaurantByOwner(Auth::id());
         if (!$restaurant) {
             return redirect()->route('restaurant.profile.create')
                 ->with('info', 'Please set up your restaurant profile first.');

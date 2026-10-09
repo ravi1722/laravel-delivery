@@ -25,6 +25,7 @@ class Order extends Model
         'discount_amount',
         'tax_amount',
         'total_amount',
+        'razorpay_order_id',
         'special_instructions',
         'estimated_delivery_at',
         'delivered_at',

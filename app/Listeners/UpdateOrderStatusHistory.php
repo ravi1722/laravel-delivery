@@ -29,7 +29,7 @@ class UpdateOrderStatusHistory
             'order_id'   => $event->order->id,
             'status'     => $event->newStatus,
             'note'       => "Status changed from {$event->previousStatus} to {$event->newStatus}",
-            'changed_by' => Auth::user()->id,
+            'changed_by' => Auth::id(),
         ]);
 
         // 2. Notify customer via database notification
